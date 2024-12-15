@@ -35,7 +35,7 @@ pub fn run() {
             }
 
             // init the python sidecar
-            let sidecar_command = app.shell().sidecar("taupy-pyserver").unwrap();
+            let sidecar_command = app.shell().sidecar("knoto-pyserver").unwrap();
 
             // generate an available port for the python sidecar
             let port_manager = PortManager::default();

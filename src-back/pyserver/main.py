@@ -58,7 +58,7 @@ else:
     cors_origins.append("tauri://localhost")  # default url at tauri build time
 
 app = FastAPI(
-    title="taupy-backend-api",
+    title="knoto-backend-api",
     version="1.0.0",
 )
 

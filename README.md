@@ -1,5 +1,7 @@
 <h1><img src="./public/knoto.svg" alt="logo" width="80" align="center"/>&nbsp;&nbsp;&nbsp;knoto</h1>
 
+<a href="https://knoto.whatphilipdoes.com"><img alt="Website" src="https://img.shields.io/website?url=https%3A%2F%2Fknoto.whatphilipdoes.com%2F&label=docs&up_message=online&down_message=offline"></a>
+
 coming soon...
 
 ### Prerequisites

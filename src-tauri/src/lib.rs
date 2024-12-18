@@ -1,5 +1,6 @@
 use std::sync::{Arc, Mutex};
 use sysinfo::{Pid, System};
+use tauri::utils::config::Csp;
 use tauri::{Manager, RunEvent};
 use tauri_plugin_shell::process::CommandEvent;
 use tauri_plugin_shell::ShellExt;
@@ -19,8 +20,24 @@ async fn get_port(state: tauri::State<'_, AppData>) -> Result<u16, ()> {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    // child process mutex
     let child_mutex = Arc::new(Mutex::new(None));
     let child_mutex_clone = child_mutex.clone();
+
+    // generate an available port for the python sidecar
+    let port_manager = PortManager::default();
+    let port = port_manager
+        .find_available_port()
+        .expect("no available port found");
+
+    // dynamic csp setup
+    let mut context: tauri::Context<tauri::Wry> = tauri::generate_context!();
+    // update csp using this: https://github.com/tauri-apps/tauri/issues/3533#issuecomment-2489166275
+    let csp = format!(
+        "default-src 'self'; connect-src 'self' ipc://localhost/get_port http://localhost:{}",
+        port
+    );
+    context.config_mut().app.security.csp = Some(Csp::Policy(csp));
 
     tauri::Builder::default()
         .plugin(tauri_plugin_shell::init())
@@ -35,14 +52,12 @@ pub fn run() {
             }
 
             // init the python sidecar
-            let sidecar_command = app.shell().sidecar("knoto-pyserver").unwrap();
-
-            // generate an available port for the python sidecar
-            let port_manager = PortManager::default();
-            let port = port_manager
-                .find_available_port()
-                .expect("no available port found");
-            let sidecar_command = sidecar_command.arg("--port").arg(port.to_string());
+            let sidecar_command = app
+                .shell()
+                .sidecar("taupy-pyserver")
+                .unwrap()
+                .arg("--port")
+                .arg(port.to_string());
             app.manage(AppData {
                 backend_api_port: port,
             });
@@ -52,7 +67,7 @@ pub fn run() {
             let sidecar_command = sidecar_command.arg("--dev");
 
             // send devserver url in dev mode
-            let dev_url = app
+            let _dev_url = app
                 .config()
                 .build
                 .dev_url
@@ -60,10 +75,10 @@ pub fn run() {
                 .expect("no devURL is set in tauri.conf.json");
             #[cfg(debug_assertions)]
             let sidecar_command = sidecar_command.arg("--devurl").arg(
-                dev_url
+                _dev_url
                     .as_str()
                     .strip_suffix("/")
-                    .unwrap_or(dev_url.as_str()),
+                    .unwrap_or(_dev_url.as_str()),
             );
 
             // print the start command to the console in dev
@@ -89,7 +104,7 @@ pub fn run() {
             });
             Ok(())
         })
-        .build(tauri::generate_context!())
+        .build(context)
         .expect("error while building tauri application")
         .run(move |_app_handle, event| match event {
             RunEvent::Exit {} => {

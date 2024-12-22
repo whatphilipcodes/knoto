@@ -13,7 +13,7 @@ try:
 except Exception as e:
     raise RuntimeError("Failed to determine target triple") from e
 
-output_name = f"knoto-pyserver-{target_triple}"
+output_name = f"taupy-pyserver-{target_triple}"
 
 ### collect python
 datas = []

@@ -55,7 +55,7 @@ pub fn run() {
             // init the python sidecar
             let sidecar_command = app
                 .shell()
-                .sidecar("taupy-pyserver")
+                .sidecar("knoto-pyserver")
                 .unwrap()
                 .arg("--port")
                 .arg(port.to_string());

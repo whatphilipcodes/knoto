@@ -47,18 +47,16 @@ def parse_arguments() -> CommandLineArgs:
 
 
 args = parse_arguments()
-cors_origins = []
+cors_origins = ["tauri://localhost"]
 
 if args.dev:
     # Enable immediate prints in dev mode
     sys.stdout.reconfigure(line_buffering=True)
     # Add dev origin to CORS
     cors_origins.append(args.devurl)
-else:
-    cors_origins.append("tauri://localhost")  # default url at tauri build time
 
 app = FastAPI(
-    title="knoto-backend-api",
+    title="taupy-backend-api",
     version="1.0.0",
 )
 

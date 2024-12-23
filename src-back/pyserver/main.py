@@ -56,7 +56,7 @@ if args.dev:
     cors_origins.append(args.devurl)
 
 app = FastAPI(
-    title="taupy-backend-api",
+    title="knoto-backend-api",
     version="1.0.0",
 )
 

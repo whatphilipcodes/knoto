@@ -1,7 +1,7 @@
 [tool.poetry]
-name = "knoto"
+name = "TauPy"
 version = "0.1.0"
-description = "note-taking app focused on spatial organization"
+description = "backend for your tauri app"
 authors = ["whatphilipcodes <gerdes.philip@gmail.com>"]
 readme = "README.md"
 package-mode = false

@@ -11,7 +11,7 @@
       "identifier": "shell:allow-spawn",
       "allow": [
         {
-          "name": "../dist-back/knoto-pyserver",
+          "name": "../dist-back/taupy-pyserver",
           "sidecar": true
         }
       ]

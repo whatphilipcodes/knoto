@@ -47,7 +47,7 @@ def parse_arguments() -> CommandLineArgs:
 
 
 args = parse_arguments()
-cors_origins = ["tauri://localhost"]
+cors_origins = ["tauri://localhost", "http://tauri.localhost"]
 
 if args.dev:
     # Enable immediate prints in dev mode
@@ -56,7 +56,7 @@ if args.dev:
     cors_origins.append(args.devurl)
 
 app = FastAPI(
-    title="knoto-backend-api",
+    title="taupy-backend-api",
     version="1.0.0",
 )
 

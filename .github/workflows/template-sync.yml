@@ -1,8 +1,8 @@
 name: template-sync
 on:
-  # runs every day at midnight as default
+  # enable this if you want to periodically sync the template
   # schedule:
-  # - cron: "0 0 * * *"
+  #   - cron: '0 0 * * *'
 
   # manual trigger
   workflow_dispatch:

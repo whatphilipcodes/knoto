@@ -1,19 +1,18 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "taupy",
+  "productName": "knoto",
   "version": "0.1.0",
-  "identifier": "com.taupy.app",
+  "identifier": "com.knoto.app",
   "build": {
     "devUrl": "http://localhost:1420",
     "beforeDevCommand": "pnpm dev",
     "beforeBuildCommand": "pnpm build",
-    "beforeBundleCommand": "node .build/create-symlink 'dist-full' 'src-tauri/target'",
     "frontendDist": "../dist-front"
   },
   "app": {
     "windows": [
       {
-        "title": "taupy",
+        "title": "knoto",
         "width": 800,
         "height": 600
       }
@@ -32,6 +31,8 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ],
-    "externalBin": ["../dist-back/taupy-pyserver"]
+    "externalBin": [
+      "../dist-back/knoto-pyserver"
+    ]
   }
 }

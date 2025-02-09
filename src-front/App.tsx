@@ -1,8 +1,17 @@
-import './App.css';
-import ConnectButton from './ConnectButton';
+import './styles/app.css';
 import knotoIcon from './assets/knoto.svg';
+import ConnectButton from './components/ConnectButton';
 
-function App() {
+import { useEffect } from 'react';
+import { useGlobalStore } from './utils/zustand';
+
+const App = () => {
+  const initAPI = useGlobalStore((state) => state.initAPI);
+
+  useEffect(() => {
+    initAPI();
+  }, [initAPI]);
+
   return (
     <main className='flex flex-col gap-4 p-12 font-normal text-neutral-950 dark:text-neutral-50'>
       <img src={knotoIcon} className='h-[80px] self-start' />
@@ -14,6 +23,6 @@ function App() {
       <ConnectButton />
     </main>
   );
-}
+};
 
 export default App;

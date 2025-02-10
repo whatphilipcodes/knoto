@@ -45,6 +45,7 @@ pub fn run() {
 
     // tauri lifecycle
     tauri::Builder::default()
+        .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_shell::init())
         .invoke_handler(tauri::generate_handler![get_port])
         .setup(move |app| {

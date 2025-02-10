@@ -6,11 +6,11 @@ import { useEffect } from 'react';
 import { useGlobalStore } from './utils/zustand';
 
 const App = () => {
-  const initAPI = useGlobalStore((state) => state.initAPI);
+  const initBackendAPI = useGlobalStore((state) => state.initBackendAPI);
 
   useEffect(() => {
-    initAPI();
-  }, [initAPI]);
+    initBackendAPI();
+  }, [initBackendAPI]);
 
   return (
     <main className='flex flex-col gap-4 p-12 font-normal text-neutral-950 dark:text-neutral-50'>

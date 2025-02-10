@@ -4,17 +4,17 @@ import { useGlobalStore } from '../utils/zustand';
 const ConnectButton = () => {
   const [result, setResult] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
-  const clientInstance = useGlobalStore((state) => state.clientInstance);
+  const backendAPI = useGlobalStore((state) => state.backendAPI);
 
   const handleConnect = async () => {
-    if (!clientInstance) {
+    if (!backendAPI) {
       setResult('API client not initialized');
       return;
     }
 
     try {
       setIsLoading(true);
-      const data = await clientInstance.testConnection();
+      const data = await backendAPI.testConnection();
       setResult(data);
     } catch (error) {
       setResult('Connection failed: ' + (error as Error).message);
@@ -27,7 +27,7 @@ const ConnectButton = () => {
     <div className='flex w-2/3 flex-col gap-4'>
       <button
         onClick={handleConnect}
-        disabled={isLoading || !clientInstance}
+        disabled={isLoading || !backendAPI}
         className='cursor-pointer rounded border-none bg-blue-500 p-2 text-neutral-950 disabled:cursor-wait dark:text-neutral-50'
       >
         {isLoading ? 'Connecting...' : 'Test Connection'}

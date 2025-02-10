@@ -9,12 +9,14 @@ export type GlobalStore = ExtractState<typeof useGlobalStore>;
 export const useGlobalStore = create(
   combine(
     {
-      clientInstance: undefined as ApiClient | undefined,
+      backendPort: undefined as number | undefined,
+      backendAPI: undefined as ApiClient | undefined,
     },
     (set) => ({
-      initAPI: async () => {
+      initBackendAPI: async () => {
         const port = await invoke<number>('get_port');
-        set({ clientInstance: new ApiClient('http', 'localhost', port) });
+        set({ backendPort: port });
+        set({ backendAPI: new ApiClient('http', 'localhost', port) });
       },
     }),
   ),

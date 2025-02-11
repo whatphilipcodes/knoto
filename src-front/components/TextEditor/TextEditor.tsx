@@ -54,9 +54,9 @@ const TextEditor = () => {
         />
         <HistoryPlugin />
         <AutoFocusPlugin />
-        <LinkPlugin />
+        {/* <LinkPlugin />
         <ListPlugin />
-        <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
+        <MarkdownShortcutPlugin transformers={TRANSFORMERS} /> */}
       </LexicalComposer>
     </div>
   );

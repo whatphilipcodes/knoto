@@ -8,6 +8,20 @@ import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 
+// md support
+import {
+  TRANSFORMERS,
+  $convertFromMarkdownString,
+  $convertToMarkdownString,
+} from '@lexical/markdown';
+import { MarkdownShortcutPlugin } from '@lexical/react/LexicalMarkdownShortcutPlugin';
+
+// nodes
+import { HeadingNode } from '@lexical/rich-text';
+import { ListPlugin } from '@lexical/react/LexicalListPlugin';
+import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
+
+// tailwind styling
 import theme from './theme';
 
 const onError = (error: Error) => {
@@ -27,6 +41,7 @@ const TextEditor = () => {
     namespace: 'text-editor',
     theme,
     onError,
+    nodes: [HeadingNode],
   };
 
   return (
@@ -39,6 +54,9 @@ const TextEditor = () => {
         />
         <HistoryPlugin />
         <AutoFocusPlugin />
+        <LinkPlugin />
+        <ListPlugin />
+        <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
       </LexicalComposer>
     </div>
   );

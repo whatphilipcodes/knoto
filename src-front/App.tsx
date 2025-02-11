@@ -5,6 +5,7 @@ import './styles/app.css';
 import { useEffect } from 'react';
 import { useGlobalStore } from './utils/zustand';
 import TextEditor from './components/TextEditor/TextEditor';
+// import FixedGraph from './components/FixedGraph';
 
 const App = () => {
   const initBackendAPI = useGlobalStore((state) => state.initBackendAPI);
@@ -23,6 +24,7 @@ const App = () => {
       </p>
       <ConnectButton /> */}
       <TextEditor />
+      {/* <FixedGraph /> */}
     </main>
   );
 };

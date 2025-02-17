@@ -23,6 +23,7 @@
     "@lexical/rich-text": "^0.24.0",
     "@lexical/utils": "^0.24.0",
     "@tauri-apps/api": "^2.2.0",
+    "@tauri-apps/plugin-dialog": "~2",
     "@tauri-apps/plugin-fs": "~2.2.0",
     "@tauri-apps/plugin-shell": "^2.2.0",
     "lexical": "^0.24.0",

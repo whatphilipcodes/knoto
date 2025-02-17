@@ -17,6 +17,15 @@
       ]
     },
     "shell:allow-open",
-    "fs:default"
+    "dialog:default",
+    "fs:default",
+    {
+      "identifier": "fs:scope",
+      "allow": [
+        {
+          "path": "$HOME/*"
+        }
+      ]
+    }
   ]
 }

@@ -3,7 +3,7 @@
   "backend_identifier": "knoto-pyserver",
   "bundle_identifier": "com.knoto.app",
   "version": "0.1.0",
-  "authors": ["whatphilipcodes <gerdes.philip@gmail.com>"],
+  "authors": ["whatphilipcodes <hello@whatphilipdoes.com>"],
   "description": "spatial knowledge organization",
   "repository": "https://github.com/whatphilipcodes/knoto",
   "readme": "README.md",

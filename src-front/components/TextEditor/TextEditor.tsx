@@ -9,17 +9,17 @@ import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
 
 // md support
-import {
-  TRANSFORMERS,
-  $convertFromMarkdownString,
-  $convertToMarkdownString,
-} from '@lexical/markdown';
-import { MarkdownShortcutPlugin } from '@lexical/react/LexicalMarkdownShortcutPlugin';
+// import {
+//   TRANSFORMERS,
+//   $convertFromMarkdownString,
+//   $convertToMarkdownString,
+// } from '@lexical/markdown';
+// import { MarkdownShortcutPlugin } from '@lexical/react/LexicalMarkdownShortcutPlugin';
 
 // nodes
 import { HeadingNode } from '@lexical/rich-text';
-import { ListPlugin } from '@lexical/react/LexicalListPlugin';
-import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
+// import { ListPlugin } from '@lexical/react/LexicalListPlugin';
+// import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
 
 // tailwind styling
 import theme from './theme';

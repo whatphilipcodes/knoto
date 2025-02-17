@@ -2,7 +2,7 @@
 name = "knoto"
 version = "0.1.0"
 description = "spatial knowledge organization"
-authors = [ "whatphilipcodes <gerdes.philip@gmail.com>" ]
+authors = [ "whatphilipcodes <hello@whatphilipdoes.com>" ]
 readme = "README.md"
 package-mode = false
 

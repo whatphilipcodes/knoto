@@ -4,28 +4,38 @@ import {
   PredefinedMenuItem,
   MenuItem,
 } from '@tauri-apps/api/menu';
+import { emit } from '@tauri-apps/api/event';
 
 export const createMenu = async () => {
   // predefined
-  const seperator = await PredefinedMenuItem.new({
+  const separator = await PredefinedMenuItem.new({
     item: 'Separator',
   });
 
   // menu edits
   const menu = await Menu.default();
-  const filemenu = (await menu.removeAt(1)) as Submenu;
-  await filemenu.prepend(seperator);
+  const fileMenu = (await menu.removeAt(1)) as Submenu;
+  await fileMenu.prepend(separator);
   const openCollection = await MenuItem.new({
     id: 'openCollection',
     text: 'Open Collection...',
     accelerator: 'CmdOrCtrl+Alt+O',
-    action: () => console.log('open collection'),
+    action: () => emit('menu:open-collection'),
   });
-  await filemenu.prepend(openCollection);
-  await menu.insert(filemenu, 1);
+  await fileMenu.prepend(openCollection);
+  await menu.insert(fileMenu, 1);
 
   const help = await menu.removeAt(5); // no help menu until implemented
-  help?.close();
+  await help?.close();
 
   await menu.setAsAppMenu();
+
+  const clear = async () => {
+    await separator.close();
+    await openCollection.close();
+    await fileMenu.close();
+    await menu.close();
+  };
+
+  return clear;
 };

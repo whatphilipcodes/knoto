@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useGlobalStore } from '../utils/zustand';
+import { useGlobalStore } from '../utils/zustand/zustand';
 
 const ConnectButton = () => {
   const [result, setResult] = useState<string>('');

@@ -18,6 +18,8 @@
     },
     "shell:allow-open",
     "dialog:default",
+    "fs:allow-appconfig-read",
+    "fs:allow-appconfig-write",
     "fs:default",
     {
       "identifier": "fs:scope",
@@ -26,6 +28,8 @@
           "path": "$HOME/*"
         }
       ]
-    }
+    },
+    "process:default",
+    "process:default"
   ]
 }

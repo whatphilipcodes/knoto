@@ -1,32 +1,47 @@
 import './styles/app.css';
-import knotoIcon from './assets/knoto.svg';
+import { useState, useEffect } from 'react';
 
-import { useEffect } from 'react';
-import { useGlobalStore } from './utils/zustand';
-import ConnectButton from './components/ConnectButton';
-// import TextEditor from './components/TextEditor/TextEditor';
-// import FixedGraph from './components/FixedGraph';
+import { listen } from '@tauri-apps/api/event';
+
+import { createMenu } from './utils/menu';
+import { useApplicationStore } from './store/applicationStore';
+import { useCollectionStore, initColSubToApp } from './store/collectionStore';
 
 const App = () => {
-  const initBackendAPI = useGlobalStore((state) => state.initBackendAPI);
+  const [inputValue, setInputValue] = useState('');
+
+  const application = useApplicationStore();
+  const collection = useCollectionStore();
 
   useEffect(() => {
-    initBackendAPI();
-  }, [initBackendAPI]);
+    let clearMenu: () => Promise<void> = () => Promise.resolve();
+    const asyncSetup = async () => {
+      clearMenu = await createMenu();
+    };
+    asyncSetup();
+    const clearColSubToApp = initColSubToApp();
+    return () => {
+      clearColSubToApp();
+      clearMenu();
+    };
+  }, []);
 
   return (
     <main className='flex flex-col gap-4 p-12 font-normal text-neutral-950 dark:text-neutral-50'>
-      <img src={knotoIcon} className='h-[80px] self-start' />
-      <p>
-        The Python API is starting in the background. This demo setup is not
-        showing any loading state. Because of that, inital connection attemps
-        might fail until the uvicorn server has been launched successfully.
-      </p>
-      <ConnectButton />
-      {/* <TextEditor /> */}
-      {/* <FixedGraph /> */}
+      <textarea
+        className='bg-white text-black'
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
+      />
+      <button
+        className='bg-amber-600'
+        onClick={() => {
+          application.setActiveCollection(inputValue);
+        }}
+      >
+        en
+      </button>
     </main>
   );
 };
-
 export default App;

@@ -45,6 +45,7 @@ pub fn run() {
 
     // tauri lifecycle
     tauri::Builder::default()
+        .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_shell::init())
@@ -124,7 +125,7 @@ pub fn run() {
                         let exe_path = process.exe();
                         // kill the specific process first
                         process.kill();
-                        // find and kill any related processes
+                        // kill any related processes
                         for (_, p) in system.processes() {
                             if p.exe() == exe_path {
                                 p.kill();
@@ -132,7 +133,7 @@ pub fn run() {
                         }
                     }
                 }
-                println!("exiting python backend...")
+                println!("exiting python backend...");
             }
             _ => {}
         });

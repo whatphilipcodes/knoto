@@ -26,7 +26,6 @@ export const loadState = async <T extends object>(
   filePath: string,
   defaultState: T,
 ): Promise<T> => {
-  console.log('load fn called');
   try {
     const data = JSON.parse(
       await readTextFile(filePath, { baseDir: BaseDirectory.AppData }),

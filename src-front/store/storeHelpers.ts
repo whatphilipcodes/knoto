@@ -56,14 +56,39 @@ export const loadState = async <T extends object>(
     const data = JSON.parse(await readTextFile(filePath, { baseDir: baseDir }));
     if (!data?.state) {
       console.warn(`Invalid state structure in ${filePath}. Using default.`);
-      return defaultState;
+      return stripNonSerializable(defaultState);
     }
     const validPartial = validateState<T>(data.state, defaultState);
     return validPartial;
   } catch (error) {
     console.warn(`Failed to load state from ${filePath}`, error);
-    return defaultState;
+    return stripNonSerializable(defaultState);
   }
+};
+
+const stripNonSerializable = <T>(data: T): T => {
+  if (data === null || typeof data !== 'object') {
+    return data;
+  }
+
+  if (Array.isArray(data)) {
+    return data.map(stripNonSerializable) as unknown as T;
+  }
+
+  const result: any = {};
+  for (const key in data) {
+    if (Object.prototype.hasOwnProperty.call(data, key)) {
+      const value = (data as { [key: string]: any })[key];
+      if (
+        typeof value !== 'function' &&
+        typeof value !== 'symbol' &&
+        typeof value !== 'undefined'
+      ) {
+        result[key] = stripNonSerializable(value);
+      }
+    }
+  }
+  return result as T;
 };
 
 export const ensureAppData = async () => {

@@ -1,12 +1,11 @@
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 //
-import { sep, BaseDirectory } from '@tauri-apps/api/path';
-import { exists, mkdir } from '@tauri-apps/plugin-fs';
-import { open } from '@tauri-apps/plugin-dialog';
+import { invoke } from '@tauri-apps/api/core';
 //
 import { ApiClient } from '../utils/api';
 import { logger } from './middleware/logger';
+import { openDir } from '../utils/filesystem';
 import { withPersistentStorage } from './middleware/withPersistentStorage';
 
 const defaultApplicationState = {
@@ -16,6 +15,7 @@ const defaultApplicationState = {
 };
 
 type ApplicationState = typeof defaultApplicationState & {
+  initBackendAPI: () => Promise<void>;
   openCollectionDir: () => Promise<void>;
 };
 
@@ -25,27 +25,21 @@ export const useApplicationStore = create<ApplicationState>()(
     logger(
       withPersistentStorage<ApplicationState>(() => 'config.json')((set) => ({
         ...defaultApplicationState,
+        initBackendAPI: async () => {
+          console.log('hello from init api');
+          const backendPort = await invoke<number>('get_port');
+          console.log(backendPort);
+          set({
+            backendPort,
+            backendAPI: new ApiClient('http', 'localhost', backendPort),
+          });
+          console.log('set ran');
+        },
         openCollectionDir: async () => {
-          const activeCollectionDir = await openCollectionDir();
+          const activeCollectionDir = await openDir();
           if (activeCollectionDir) set({ activeCollectionDir });
         },
       })),
     ),
   ),
 );
-
-const openCollectionDir = async () => {
-  try {
-    const root = await open({
-      multiple: false,
-      directory: true,
-    });
-    if (!root) return undefined;
-    const noteSub = `${root}${sep()}notes`;
-    if (!(await exists(noteSub, { baseDir: BaseDirectory.Home })))
-      mkdir(noteSub, { baseDir: BaseDirectory.Home });
-    return root;
-  } catch (error) {
-    console.log('An error occurred during openCollectionDir:', error);
-  }
-};

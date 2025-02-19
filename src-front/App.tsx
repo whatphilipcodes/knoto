@@ -1,9 +1,11 @@
 import './styles/app.css';
 import { useState, useEffect } from 'react';
+import ConnectButton from './components/ConnectButton';
 //
 import { listen } from '@tauri-apps/api/event';
 //
 import { createMenu } from './utils/menu';
+import { ensureAppConfig } from './utils/filesystem';
 import { useApplicationStore } from './store/applicationStore';
 import { useCollectionStore, subscribeColToApp } from './store/collectionStore';
 
@@ -15,19 +17,19 @@ const App = () => {
 
   useEffect(() => {
     const asyncSetup = async () => {
+      await ensureAppConfig();
+      await application.initBackendAPI();
       const asyncCleanup: (() => void)[] = [];
       asyncCleanup.push(await createMenu());
       asyncCleanup.push(
-        await listen('menu:open-collection', () => {
-          console.log('menu:open-collection');
-          application.openCollectionDir();
+        await listen('menu:open-collection', async () => {
+          await application.openCollectionDir();
         }),
       );
       return asyncCleanup;
     };
     const asyncCleanup = asyncSetup();
     const clearColSubToApp = subscribeColToApp();
-
     return () => {
       clearColSubToApp();
       //
@@ -50,6 +52,7 @@ const App = () => {
       >
         set collection data
       </button>
+      <ConnectButton />
     </main>
   );
 };

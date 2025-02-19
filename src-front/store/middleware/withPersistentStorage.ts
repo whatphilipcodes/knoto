@@ -3,6 +3,24 @@ import { writeTextFile, BaseDirectory } from '@tauri-apps/plugin-fs';
 //
 import { loadState } from '../storeHelpers';
 
+/**
+ * Enhances a Zustand state creator with persistent storage functionality.
+ *
+ * This higher-order function wraps the provided state creator so that:
+ * - It first loads the persisted state (if available) from the file specified by `getFilePath`
+ *   and sets it as the current state.
+ * - It intercepts state updates (via the `set` function) and writes the new state to disk,
+ *   ensuring persistence.
+ *
+ * @template T - The shape of the state object.
+ * @param getFilePath - A function that accepts the current state getter and returns
+ *                      the file path where the state should be persisted. If undefined,
+ *                      persistence is disabled.
+ * @param version - The version number of the persisted state, useful for managing state migrations.
+ *                  Defaults to 0.
+ * @returns A function that accepts a standard Zustand state creator and returns an enhanced state creator
+ *          with persistent storage capabilities.
+ */
 export const withPersistentStorage = <T extends object>(
   getFilePath: (get: () => T) => string | undefined,
   version = 0,
@@ -23,7 +41,12 @@ export const withPersistentStorage = <T extends object>(
         }
       })().catch(console.error);
 
-      // Override 'set' to persist changes
+      /**
+       * Overrides the standard 'set' method to persist state changes to disk.
+       *
+       * @param nextState - The new state or partial update for the state.
+       * @param replace - If true, replaces the current state entirely instead of merging.
+       */
       const customSet: typeof set = (nextState, replace) => {
         set(nextState, replace as false | undefined);
         const filePath = getFilePath(get);
@@ -35,7 +58,7 @@ export const withPersistentStorage = <T extends object>(
         }
       };
 
-      // Return modded config
+      // Return the enhanced configuration by passing in the custom set method.
       return config(customSet, get, api as StoreApi<T>);
     };
   };

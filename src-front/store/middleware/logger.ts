@@ -1,7 +1,16 @@
 import { StateCreator, StoreMutatorIdentifier } from 'zustand';
 
-// Define a type for the Logger function which takes a StateCreator and an optional name,
-// and returns a StateCreator. The StateCreator can have additional mutator parameters (Mps) and mutator creators (Mcs).
+/**
+ * Logger is a higher-order function that wraps a Zustand state creator function
+ * to log state changes whenever the `set` or `setState` functions are called.
+ *
+ * @template T - The type of the state.
+ * @template Mps - The list of store mutators for `set`.
+ * @template Mcs - The list of store mutators for `setState`.
+ * @param f - The original state creator function.
+ * @param name - Optional name to prepend to log messages.
+ * @returns A new state creator function that logs state changes.
+ */
 type Logger = <
   T,
   Mps extends [StoreMutatorIdentifier, unknown][] = [],
@@ -11,14 +20,28 @@ type Logger = <
   name?: string,
 ) => StateCreator<T, Mps, Mcs>;
 
-// Define a type for the Logger implementation which takes a StateCreator and an optional name,
-// and returns a StateCreator. This implementation does not use additional mutator parameters or creators.
+/**
+ * LoggerImpl is a specialized version of Logger for state creators without mutators.
+ *
+ * @template T - The type of the state.
+ * @param f - The original state creator function.
+ * @param name - Optional name to prepend to log messages.
+ * @returns A new state creator function that logs state changes.
+ */
 type LoggerImpl = <T>(
   f: StateCreator<T, [], []>,
   name?: string,
 ) => StateCreator<T, [], []>;
 
-// Implement the logger function which wraps the set and setState functions to log their actions.
+/**
+ * Implements a logger that wraps the `set` and `setState` functions of a Zustand store
+ * to add logging of the state after updates.
+ *
+ * @template T - The type of the state.
+ * @param f - The original state creator function.
+ * @param name - Optional name to prepend to log messages.
+ * @returns A state creator function with logging enabled.
+ */
 const loggerImpl: LoggerImpl = (f, name) => (set, get, store) => {
   // Wrap the set function to log the state after it is updated.
   const loggedSet: typeof set = (...a) => {
@@ -37,5 +60,9 @@ const loggerImpl: LoggerImpl = (f, name) => (set, get, store) => {
   return f(loggedSet, get, store);
 };
 
-// Export the logger function, casting it to the Logger type.
+/**
+ * A logger function that wraps a Zustand state creator to log state changes.
+ *
+ * This is the exported logger function intended for use with Zustand stores.
+ */
 export const logger = loggerImpl as unknown as Logger;

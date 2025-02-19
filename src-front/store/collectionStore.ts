@@ -1,36 +1,49 @@
 import { create } from 'zustand';
+import { BaseDirectory } from '@tauri-apps/api/path';
 //
 import { logger } from './middleware/logger';
 import { loadState } from './storeHelpers';
 import { withPersistentStorage } from './middleware/withPersistentStorage';
 import { useApplicationStore } from './applicationStore';
 
-interface CollectionState {
-  collectionDir: string | undefined;
-}
+const defaultCollectionState = {
+  collectionRoot: undefined as string | undefined,
+  testValue: 'test',
+};
+
+type CollectionState = typeof defaultCollectionState & {
+  setTestValue: (newValue: string) => void;
+  reset: () => void;
+};
 
 export const useCollectionStore = create<CollectionState>()(
   logger(
     withPersistentStorage<CollectionState>((get) => {
       const state = get();
-      return state ? state.collectionDir : undefined;
+      return state ? state.collectionRoot : undefined;
     })((set) => ({
-      collectionDir: undefined,
+      ...defaultCollectionState,
+      setTestValue: (testValue) => set({ testValue }),
+      reset: () => set(defaultCollectionState),
+      // idea: data as map: metadata -> filepath ! content loaded on opening
     })),
   ),
 );
 
 export const initColSubToApp = () => {
-  // Auto-update User Store when the File Path Changes
+  // Reload CollectionStore when activeCollectionDir changes
   return useApplicationStore.subscribe(
     (state) => state.activeCollectionDir,
-    (newDir) => {
+    async (newDir) => {
       if (!newDir) return;
       console.log('subscription detected new dir:', newDir);
-      loadState<CollectionState>(newDir, { collectionDir: newDir }).then(
-        // to-do: handle empty state from load (config found, containing no collectionDir)
-        (newState) => useCollectionStore.setState(newState),
-      );
+      useCollectionStore.getState().reset();
+      useCollectionStore.setState({ collectionRoot: newDir });
+      await loadState<CollectionState>(
+        newDir,
+        BaseDirectory.Home,
+        useCollectionStore.getState(),
+      ).then((newState) => useCollectionStore.setState(newState));
     },
     { fireImmediately: false },
   );

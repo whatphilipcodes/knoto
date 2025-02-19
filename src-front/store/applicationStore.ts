@@ -9,7 +9,6 @@ import { withPersistentStorage } from './middleware/withPersistentStorage';
 interface ApplicationState {
   backendPort: number | undefined;
   backendAPI: ApiClient | undefined;
-  // idea: data as map: metadata -> filepath ! content loaded on opening
   activeCollectionDir: string | undefined;
   setActiveCollection: (newCollection: string) => void;
 }

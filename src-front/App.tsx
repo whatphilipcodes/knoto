@@ -39,7 +39,15 @@ const App = () => {
           application.setActiveCollection(inputValue);
         }}
       >
-        en
+        set app data
+      </button>
+      <button
+        className='bg-blue-500'
+        onClick={() => {
+          collection.setTestValue(inputValue);
+        }}
+      >
+        set collection data
       </button>
     </main>
   );

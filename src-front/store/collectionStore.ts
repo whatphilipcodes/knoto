@@ -14,7 +14,6 @@ const defaultCollectionState = {
 };
 
 type CollectionState = typeof defaultCollectionState & {
-  // setDirs: (newRoot: string) => void;
   test: (val: string) => void;
 };
 
@@ -25,9 +24,6 @@ export const useCollectionStore = create<CollectionState>()(
       return state ? state.collectionDirStore : undefined;
     })((set) => ({
       ...defaultCollectionState,
-      // setDirs: (newRoot) => {
-      //   set();
-      // },
       test: (testValue) => {
         set({ testValue });
       },
@@ -43,18 +39,17 @@ const getCollectionDirs = (root: string) => {
   };
 };
 
+// to-do: unsub is slower than react strict reload
 export const subscribeColToApp = () => {
   // Reload CollectionStore when activeCollectionDir changes
   return useApplicationStore.subscribe(
     (state) => state.activeCollectionDir,
     async (newDir) => {
-      console.log('subscribe fired', newDir);
       if (!newDir) return;
       const merged = {
         ...useCollectionStore.getInitialState(),
         ...getCollectionDirs(newDir),
       };
-      console.log('! merged fallback state after subscribe', merged);
       if (!merged.collectionDirStore) return;
       await loadState<CollectionState>(
         merged.collectionDirStore,
@@ -62,6 +57,6 @@ export const subscribeColToApp = () => {
         merged,
       ).then((newState) => useCollectionStore.setState(newState));
     },
-    { fireImmediately: false },
+    { fireImmediately: true },
   );
 };

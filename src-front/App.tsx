@@ -29,9 +29,9 @@ const App = () => {
     const clearColSubToApp = subscribeColToApp();
 
     return () => {
-      asyncCleanup.then((cfa) => cfa.forEach((f) => f()));
-      //
       clearColSubToApp();
+      //
+      asyncCleanup.then((cfa) => cfa.forEach((f) => f()));
     };
   }, []);
 

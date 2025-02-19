@@ -1,11 +1,11 @@
 import './styles/app.css';
 import { useState, useEffect } from 'react';
-
+//
 import { listen } from '@tauri-apps/api/event';
-
+//
 import { createMenu } from './utils/menu';
 import { useApplicationStore } from './store/applicationStore';
-import { useCollectionStore, initColSubToApp } from './store/collectionStore';
+import { useCollectionStore, subscribeColToApp } from './store/collectionStore';
 
 const App = () => {
   const [inputValue, setInputValue] = useState('');
@@ -14,15 +14,24 @@ const App = () => {
   const collection = useCollectionStore();
 
   useEffect(() => {
-    let clearMenu: () => Promise<void> = () => Promise.resolve();
     const asyncSetup = async () => {
-      clearMenu = await createMenu();
+      const asyncCleanup: (() => void)[] = [];
+      asyncCleanup.push(await createMenu());
+      asyncCleanup.push(
+        await listen('menu:open-collection', () => {
+          console.log('menu:open-collection');
+          application.openCollectionDir();
+        }),
+      );
+      return asyncCleanup;
     };
-    asyncSetup();
-    const clearColSubToApp = initColSubToApp();
+    const asyncCleanup = asyncSetup();
+    const clearColSubToApp = subscribeColToApp();
+
     return () => {
+      asyncCleanup.then((cfa) => cfa.forEach((f) => f()));
+      //
       clearColSubToApp();
-      clearMenu();
     };
   }, []);
 
@@ -34,17 +43,9 @@ const App = () => {
         onChange={(e) => setInputValue(e.target.value)}
       />
       <button
-        className='bg-amber-600'
-        onClick={() => {
-          application.setActiveCollection(inputValue);
-        }}
-      >
-        set app data
-      </button>
-      <button
         className='bg-blue-500'
         onClick={() => {
-          collection.setTestValue(inputValue);
+          collection.test(inputValue);
         }}
       >
         set collection data

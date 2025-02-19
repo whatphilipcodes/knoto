@@ -1,5 +1,6 @@
 import { create } from 'zustand';
-import { BaseDirectory } from '@tauri-apps/api/path';
+//
+import { BaseDirectory, sep } from '@tauri-apps/api/path';
 //
 import { logger } from './middleware/logger';
 import { loadState } from './storeHelpers';
@@ -7,42 +8,58 @@ import { withPersistentStorage } from './middleware/withPersistentStorage';
 import { useApplicationStore } from './applicationStore';
 
 const defaultCollectionState = {
-  collectionRoot: undefined as string | undefined,
+  collectionDirRoot: undefined as string | undefined,
+  collectionDirStore: undefined as string | undefined,
   testValue: 'test',
 };
 
 type CollectionState = typeof defaultCollectionState & {
-  setTestValue: (newValue: string) => void;
-  reset: () => void;
+  // setDirs: (newRoot: string) => void;
+  test: (val: string) => void;
 };
 
 export const useCollectionStore = create<CollectionState>()(
   logger(
     withPersistentStorage<CollectionState>((get) => {
       const state = get();
-      return state ? state.collectionRoot : undefined;
+      return state ? state.collectionDirStore : undefined;
     })((set) => ({
       ...defaultCollectionState,
-      setTestValue: (testValue) => set({ testValue }),
-      reset: () => set(defaultCollectionState),
+      // setDirs: (newRoot) => {
+      //   set();
+      // },
+      test: (testValue) => {
+        set({ testValue });
+      },
       // idea: data as map: metadata -> filepath ! content loaded on opening
     })),
   ),
 );
 
-export const initColSubToApp = () => {
+const getCollectionDirs = (root: string) => {
+  return {
+    collectionDirRoot: root,
+    collectionDirStore: `${root}${sep()}collection-data.json` || undefined,
+  };
+};
+
+export const subscribeColToApp = () => {
   // Reload CollectionStore when activeCollectionDir changes
   return useApplicationStore.subscribe(
     (state) => state.activeCollectionDir,
     async (newDir) => {
+      console.log('subscribe fired', newDir);
       if (!newDir) return;
-      console.log('subscription detected new dir:', newDir);
-      useCollectionStore.getState().reset();
-      useCollectionStore.setState({ collectionRoot: newDir });
+      const merged = {
+        ...useCollectionStore.getInitialState(),
+        ...getCollectionDirs(newDir),
+      };
+      console.log('! merged fallback state after subscribe', merged);
+      if (!merged.collectionDirStore) return;
       await loadState<CollectionState>(
-        newDir,
+        merged.collectionDirStore,
         BaseDirectory.Home,
-        useCollectionStore.getState(),
+        merged,
       ).then((newState) => useCollectionStore.setState(newState));
     },
     { fireImmediately: false },

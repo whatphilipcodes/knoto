@@ -29,14 +29,11 @@ export const useApplicationStore = create<ApplicationState>()(
       )((set) => ({
         ...defaultApplicationState,
         initBackendAPI: async () => {
-          console.log('hello from init api');
           const backendPort = await invoke<number>('get_port');
-          console.log(backendPort);
           set({
             backendPort,
             backendAPI: new ApiClient('http', 'localhost', backendPort),
           });
-          console.log('set ran');
         },
         openCollectionDir: async () => {
           const activeCollectionDir = await openDir();

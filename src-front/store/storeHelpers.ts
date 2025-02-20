@@ -76,7 +76,6 @@ export const ensureAppData = async () => {
     console.log('config dir available:', dir);
     return;
   } else {
-    console.log('config dir has to be created');
     await mkdir(dir);
     console.log('config dir created at:', dir);
   }

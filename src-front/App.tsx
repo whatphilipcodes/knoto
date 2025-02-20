@@ -5,7 +5,6 @@ import ConnectButton from './components/ConnectButton';
 import { listen } from '@tauri-apps/api/event';
 //
 import { createMenu } from './utils/menu';
-import { ensureAppConfig } from './utils/filesystem';
 import { useApplicationStore } from './store/applicationStore';
 import { useCollectionStore, subscribeColToApp } from './store/collectionStore';
 
@@ -17,7 +16,7 @@ const App = () => {
 
   useEffect(() => {
     const asyncSetup = async () => {
-      await ensureAppConfig();
+      await application.initAppConfigDir();
       await application.initBackendAPI();
       const asyncCleanup: (() => void)[] = [];
       asyncCleanup.push(await createMenu());

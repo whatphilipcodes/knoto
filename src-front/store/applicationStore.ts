@@ -3,18 +3,20 @@ import { subscribeWithSelector } from 'zustand/middleware';
 //
 import { invoke } from '@tauri-apps/api/core';
 //
-import { ApiClient } from '../utils/api';
-import { logger } from './middleware/logger';
-import { openDir } from '../utils/filesystem';
 import { withPersistentStorage } from './middleware/withPersistentStorage';
+import { logger } from './middleware/logger';
+import { openDir, getAppConfigDir } from '../utils/filesystem';
+import { ApiClient } from '../utils/api';
 
 const defaultApplicationState = {
   backendPort: undefined as number | undefined,
   backendAPI: undefined as ApiClient | undefined,
+  appConfigDir: undefined as string | undefined,
   activeCollectionDir: undefined as string | undefined,
 };
 
 type ApplicationState = typeof defaultApplicationState & {
+  initAppConfigDir: () => Promise<void>;
   initBackendAPI: () => Promise<void>;
   openCollectionDir: () => Promise<void>;
 };
@@ -26,8 +28,13 @@ export const useApplicationStore = create<ApplicationState>()(
       withPersistentStorage<ApplicationState>(
         () => 'config.json',
         ['activeCollectionDir'],
-      )((set) => ({
+      )((set, get) => ({
         ...defaultApplicationState,
+        initAppConfigDir: async () => {
+          if (get().appConfigDir) return;
+          const appConfigDir = await getAppConfigDir();
+          set({ appConfigDir });
+        },
         initBackendAPI: async () => {
           const backendPort = await invoke<number>('get_port');
           set({

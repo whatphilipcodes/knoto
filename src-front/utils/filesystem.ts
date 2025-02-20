@@ -15,26 +15,18 @@ export const openDir = async () => {
   }
 };
 
-export const ensureAppConfig = (() => {
-  let isRunning = false;
-  return async () => {
-    if (isRunning) {
-      return;
+export const getAppConfigDir = async () => {
+  try {
+    const dir = await appConfigDir();
+    if (await exists(dir)) {
+      console.log('config dir available:', dir);
+      return dir;
+    } else {
+      await mkdir(dir);
+      console.log('config dir created at:', dir);
+      return dir;
     }
-    isRunning = true;
-    try {
-      const dir = await appConfigDir();
-      if (await exists(dir)) {
-        console.log('config dir available:', dir);
-        return;
-      } else {
-        await mkdir(dir);
-        console.log('config dir created at:', dir);
-      }
-    } catch (error) {
-      console.error('An error occurred in ensureAppConfig:', error);
-    } finally {
-      isRunning = false;
-    }
-  };
-})();
+  } catch (error) {
+    console.error('An error occurred in ensureAppConfig:', error);
+  }
+};

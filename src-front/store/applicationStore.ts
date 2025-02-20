@@ -23,7 +23,10 @@ type ApplicationState = typeof defaultApplicationState & {
 export const useApplicationStore = create<ApplicationState>()(
   subscribeWithSelector(
     logger(
-      withPersistentStorage<ApplicationState>(() => 'config.json')((set) => ({
+      withPersistentStorage<ApplicationState>(
+        () => 'config.json',
+        ['activeCollectionDir'],
+      )((set) => ({
         ...defaultApplicationState,
         initBackendAPI: async () => {
           console.log('hello from init api');

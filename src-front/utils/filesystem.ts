@@ -19,11 +19,9 @@ export const getAppConfigDir = async () => {
   try {
     const dir = await appConfigDir();
     if (await exists(dir)) {
-      console.log('config dir available:', dir);
       return dir;
     } else {
       await mkdir(dir);
-      console.log('config dir created at:', dir);
       return dir;
     }
   } catch (error) {

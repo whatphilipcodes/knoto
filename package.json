@@ -22,6 +22,7 @@
     "@lexical/react": "^0.24.0",
     "@lexical/rich-text": "^0.24.0",
     "@lexical/utils": "^0.24.0",
+    "@react-three/fiber": "^9.0.4",
     "@tauri-apps/api": "^2.2.0",
     "@tauri-apps/plugin-dialog": "~2.2.0",
     "@tauri-apps/plugin-fs": "~2.2.0",
@@ -31,6 +32,7 @@
     "lucide-react": "^0.475.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "three": "^0.173.0",
     "zustand": "^5.0.3"
   },
   "devDependencies": {
@@ -40,6 +42,7 @@
     "@types/node": "^22.13.4",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
+    "@types/three": "^0.173.0",
     "@vitejs/plugin-react": "^4.3.4",
     "prettier": "3.5.1",
     "prettier-plugin-tailwindcss": "^0.6.11",

@@ -2,7 +2,9 @@ import './styles/app.css';
 import { useState, useEffect } from 'react';
 // import EmptyScreen from './components/EmptyScreen';
 // import APITest from './components/APITest';
-import AtlasRenderer from './components/AtlasRenderer';
+// import AtlasRenderer from './components/AtlasRenderer';
+import R3FTest from './components/AtlasRenderer/R3FTest';
+import Button from './components/Primitives/Button';
 //
 import { listen } from '@tauri-apps/api/event';
 //
@@ -11,10 +13,9 @@ import { useApplicationStore } from './store/applicationStore';
 import { useAtlasStore, subscribeColToApp } from './store/atlasStore';
 
 const App = () => {
-  // const [inputValue, setInputValue] = useState('');
-
+  const [inputValue, setInputValue] = useState('');
   const application = useApplicationStore();
-  // const atlas = useAtlasStore();
+  const atlas = useAtlasStore();
 
   useEffect(() => {
     const asyncSetup = async () => {
@@ -38,10 +39,26 @@ const App = () => {
   }, []);
 
   return (
-    <main className='flex h-full w-full flex-col gap-4 p-12 font-normal text-neutral-950 dark:text-neutral-50'>
-      {/* <EmptyScreen />
-      <APITest /> */}
-      <AtlasRenderer />
+    <main className='flex h-full w-full flex-col gap-4 p-8 font-normal text-neutral-950 dark:text-neutral-50'>
+      <div className='flex h-full w-full shrink grow'>
+        {/* <AtlasRenderer count={1000} /> */}
+        <R3FTest />
+      </div>
+      <div className='rounded-md bg-neutral-900 p-2 ring-inset focus-within:ring-2 focus-within:ring-blue-500'>
+        <textarea
+          value={inputValue}
+          placeholder='Say something nice...'
+          onChange={(e) => setInputValue(e.target.value)}
+          className='h-full w-full bg-neutral-900 focus:outline-none'
+        ></textarea>
+      </div>
+      <Button
+        onClick={() => {
+          atlas.test(inputValue);
+        }}
+      >
+        save to atlas store
+      </Button>
     </main>
   );
 };

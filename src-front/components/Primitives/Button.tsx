@@ -16,7 +16,10 @@ const Button: FC<ButtonProps> = ({
       : 'bg-gray-500 text-white hover:bg-gray-600 focus:ring-gray-300 dark:bg-gray-700 dark:hover:bg-gray-800 dark:focus:ring-gray-500';
 
   return (
-    <button className={`${baseStyles} ${variantStyles}`} {...props}>
+    <button
+      className={`${baseStyles} ${variantStyles} cursor-pointer`}
+      {...props}
+    >
       {children}
     </button>
   );

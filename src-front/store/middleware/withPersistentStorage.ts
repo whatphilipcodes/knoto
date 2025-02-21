@@ -18,19 +18,25 @@ export const withPersistentStorage = <T extends object>(
         const filePath = getFilePath(get);
         if (filePath) {
           defaultState = filterIncluded(defaultState, include);
-          console.log('Loading state from file:', filePath);
           const savedState = await loadState<T>(
             filePath,
             baseDir,
             defaultState,
           );
-          console.log('State on disk:', savedState);
           set(savedState);
         }
       })().catch(console.error);
 
       const customSet: typeof set = (nextState, replace) => {
         set(nextState, replace as false | undefined);
+        if (include) {
+          const changes =
+            typeof nextState === 'function' ? nextState(get()) : nextState;
+          const hasIncludedChanges = Object.keys(changes).some((key) =>
+            include.includes(key as keyof T),
+          );
+          if (!hasIncludedChanges) return;
+        }
         const filePath = getFilePath(get);
         if (filePath) {
           const state = filterIncluded(get(), include);

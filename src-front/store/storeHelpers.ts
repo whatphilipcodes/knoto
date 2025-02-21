@@ -25,12 +25,14 @@ export const loadState = async <T extends object>(
   baseDir: BaseDirectory,
   defaultState: T,
 ): Promise<T> => {
+  console.log('Loading State from file:', filePath);
   try {
     const data = JSON.parse(await readTextFile(filePath, { baseDir: baseDir }));
     if (!data?.state) {
       console.warn(`Invalid state structure in ${filePath}. Using default.`);
       return stripNonSerializable(defaultState);
     }
+    console.log('State on disk:', data.state);
     const validPartial = validateState<T>(data.state, defaultState);
     return validPartial;
   } catch (error) {

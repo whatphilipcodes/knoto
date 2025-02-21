@@ -21,6 +21,8 @@ type ApplicationState = typeof defaultApplicationState & {
   openAtlasDir: () => Promise<void>;
 };
 
+// to-do: handle case where atlas is saved in config but folder has moved or been deleted
+
 // Create your stores using the typed middleware
 export const useApplicationStore = create<ApplicationState>()(
   subscribeWithSelector(

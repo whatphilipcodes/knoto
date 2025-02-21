@@ -1,8 +1,8 @@
 import { useState } from 'react';
-//
 import { useApplicationStore } from '../store/applicationStore';
+import Button from './Primitives/Button'; // Import the Button component
 
-const ConnectButton = () => {
+const APITest = () => {
   const [result, setResult] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
 
@@ -27,17 +27,17 @@ const ConnectButton = () => {
 
   return (
     <div className='flex w-2/3 flex-col gap-4'>
-      <button
+      <Button
         onClick={handleConnect}
         disabled={isLoading || !application.backendAPI}
-        className='cursor-pointer rounded border-none bg-blue-500 p-2 text-neutral-950 disabled:cursor-wait dark:text-neutral-50'
+        variant='primary'
       >
         {isLoading ? 'Connecting...' : 'Test Connection'}
-      </button>
+      </Button>
 
       <div>
         {result && (
-          <div className='select-text rounded border border-neutral-950 p-2 dark:border-neutral-50'>
+          <div className='select-text rounded border border-neutral-950 p-2 dark:border-neutral-50 dark:text-neutral-50'>
             {result}
           </div>
         )}
@@ -46,4 +46,4 @@ const ConnectButton = () => {
   );
 };
 
-export default ConnectButton;
+export default APITest;

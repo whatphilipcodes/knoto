@@ -1,6 +1,7 @@
 import './styles/app.css';
 import { useState, useEffect } from 'react';
-import ConnectButton from './components/ConnectButton';
+import EmptyScreen from './components/EmptyScreen';
+import APITest from './components/APITest';
 //
 import { listen } from '@tauri-apps/api/event';
 //
@@ -31,27 +32,14 @@ const App = () => {
     const clearColSubToApp = subscribeColToApp();
     return () => {
       clearColSubToApp();
-      //
       asyncCleanup.then((cfa) => cfa.forEach((f) => f()));
     };
   }, []);
 
   return (
     <main className='flex flex-col gap-4 p-12 font-normal text-neutral-950 dark:text-neutral-50'>
-      <textarea
-        className='bg-white text-black'
-        value={inputValue}
-        onChange={(e) => setInputValue(e.target.value)}
-      />
-      <button
-        className='bg-blue-500'
-        onClick={() => {
-          collection.test(inputValue);
-        }}
-      >
-        set collection data
-      </button>
-      <ConnectButton />
+      <EmptyScreen />
+      <APITest />
     </main>
   );
 };

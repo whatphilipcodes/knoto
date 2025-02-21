@@ -8,26 +8,26 @@ import { loadState } from './storeHelpers';
 import { withPersistentStorage } from './middleware/withPersistentStorage';
 import { useApplicationStore } from './applicationStore';
 
-const defaultCollectionState = {
-  collectionDirRoot: undefined as string | undefined,
-  collectionSubdirNotes: 'notes',
-  collectionStoreName: 'collection-data.json',
+const defaultAtlasState = {
+  atlasDirRoot: undefined as string | undefined,
+  atlasSubdirNotes: 'notes',
+  atlasStoreName: 'atlas-data.json',
   testValue: 'test',
 };
 
-type CollectionState = typeof defaultCollectionState & {
+type AtlasState = typeof defaultAtlasState & {
   test: (val: string) => void;
 };
 
-export const useCollectionStore = create<CollectionState>()(
+export const useAtlasStore = create<AtlasState>()(
   logger(
-    withPersistentStorage<CollectionState>((get) => {
+    withPersistentStorage<AtlasState>((get) => {
       const state = get();
-      return state?.collectionDirRoot
-        ? `${state.collectionDirRoot}${sep()}${state.collectionStoreName}`
+      return state?.atlasDirRoot
+        ? `${state.atlasDirRoot}${sep()}${state.atlasStoreName}`
         : undefined;
     })((set) => ({
-      ...defaultCollectionState,
+      ...defaultAtlasState,
       test: (testValue) => {
         set({ testValue });
       },
@@ -38,28 +38,28 @@ export const useCollectionStore = create<CollectionState>()(
 
 // to-do: unsub return is slower than react strict reload
 export const subscribeColToApp = () => {
-  // Reload CollectionStore when activeCollectionDir changes
+  // Reload AtlasStore when activeAtlasDir changes
   return useApplicationStore.subscribe(
-    (state) => state.activeCollectionDir,
+    (state) => state.activeAtlasDir,
     async (newDir) => {
       if (!newDir) return;
       const merged = {
-        ...useCollectionStore.getInitialState(),
-        collectionDirRoot: newDir,
+        ...useAtlasStore.getInitialState(),
+        atlasDirRoot: newDir,
       };
-      await initCollectionDir(merged);
-      await loadState<CollectionState>(
-        `${merged.collectionDirRoot}${sep()}${merged.collectionStoreName}`,
+      await initAtlasDir(merged);
+      await loadState<AtlasState>(
+        `${merged.atlasDirRoot}${sep()}${merged.atlasStoreName}`,
         BaseDirectory.Home,
         merged,
-      ).then((newState) => useCollectionStore.setState(newState));
+      ).then((newState) => useAtlasStore.setState(newState));
     },
     { fireImmediately: true },
   );
 };
 
-const initCollectionDir = async (state: CollectionState) => {
-  const noteSub = `${state.collectionDirRoot}${sep()}${state.collectionSubdirNotes}`;
+const initAtlasDir = async (state: AtlasState) => {
+  const noteSub = `${state.atlasDirRoot}${sep()}${state.atlasSubdirNotes}`;
   if (!(await exists(noteSub, { baseDir: BaseDirectory.Home })))
     mkdir(noteSub, { baseDir: BaseDirectory.Home });
 };

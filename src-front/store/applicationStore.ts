@@ -12,13 +12,13 @@ const defaultApplicationState = {
   backendPort: undefined as number | undefined,
   backendAPI: undefined as ApiClient | undefined,
   appConfigDir: undefined as string | undefined,
-  activeCollectionDir: undefined as string | undefined,
+  activeAtlasDir: undefined as string | undefined,
 };
 
 type ApplicationState = typeof defaultApplicationState & {
   initAppConfigDir: () => Promise<void>;
   initBackendAPI: () => Promise<void>;
-  openCollectionDir: () => Promise<void>;
+  openAtlasDir: () => Promise<void>;
 };
 
 // Create your stores using the typed middleware
@@ -27,7 +27,7 @@ export const useApplicationStore = create<ApplicationState>()(
     logger(
       withPersistentStorage<ApplicationState>(
         () => 'config.json',
-        ['activeCollectionDir'],
+        ['activeAtlasDir'],
       )((set, get) => ({
         ...defaultApplicationState,
         initAppConfigDir: async () => {
@@ -42,9 +42,9 @@ export const useApplicationStore = create<ApplicationState>()(
             backendAPI: new ApiClient('http', 'localhost', backendPort),
           });
         },
-        openCollectionDir: async () => {
-          const activeCollectionDir = await openDir();
-          if (activeCollectionDir) set({ activeCollectionDir });
+        openAtlasDir: async () => {
+          const activeAtlasDir = await openDir();
+          if (activeAtlasDir) set({ activeAtlasDir });
         },
       })),
     ),

@@ -11,16 +11,16 @@ export default function EmptyScreen() {
           aria-hidden='true'
         />
         <h3 className='mt-2 text-lg font-semibold text-gray-900 dark:text-gray-100'>
-          No Note Collection Loaded
+          No Note Atlas Loaded
         </h3>
         <p className='mt-1 text-sm text-gray-500 dark:text-gray-400'>
-          Open a note collection to start viewing and editing your notes.
+          Open a note atlas to start viewing and editing your notes.
         </p>
         <Button
           variant='primary'
-          onClick={() => alert('Open Collection button clicked')}
+          onClick={() => alert('Open Atlas button clicked')}
         >
-          Open Collection
+          Open Atlas
         </Button>
         <div className='mt-2 flex items-center justify-center text-sm text-gray-500 dark:text-gray-400'>
           <Option className='mx-1 h-4 w-4' aria-hidden='true' />

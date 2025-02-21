@@ -16,13 +16,13 @@ export const createMenu = async () => {
   const menu = await Menu.default();
   const fileMenu = (await menu.removeAt(1)) as Submenu;
   await fileMenu.prepend(separator);
-  const openCollection = await MenuItem.new({
-    id: 'openCollection',
-    text: 'Open Collection...',
+  const openAtlas = await MenuItem.new({
+    id: 'openAtlas',
+    text: 'Open Atlas...',
     accelerator: 'CmdOrCtrl+Alt+O',
-    action: () => emit('menu:open-collection'),
+    action: () => emit('menu:open-atlas'),
   });
-  await fileMenu.prepend(openCollection);
+  await fileMenu.prepend(openAtlas);
   await menu.insert(fileMenu, 1);
 
   const help = await menu.removeAt(5); // no help menu until implemented
@@ -32,7 +32,7 @@ export const createMenu = async () => {
 
   const clear = async () => {
     await separator.close();
-    await openCollection.close();
+    await openAtlas.close();
     await fileMenu.close();
     await menu.close();
   };

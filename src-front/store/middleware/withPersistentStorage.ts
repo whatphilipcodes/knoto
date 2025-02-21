@@ -24,7 +24,7 @@ export const withPersistentStorage = <T extends object>(
             baseDir,
             defaultState,
           );
-          console.log('State loaded:', savedState);
+          console.log('State on disk:', savedState);
           set(savedState);
         }
       })().catch(console.error);

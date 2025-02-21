@@ -1,10 +1,4 @@
-import {
-  mkdir,
-  readTextFile,
-  BaseDirectory,
-  exists,
-} from '@tauri-apps/plugin-fs';
-import { appDataDir } from '@tauri-apps/api/path';
+import { readTextFile, BaseDirectory } from '@tauri-apps/plugin-fs';
 
 export const validateState = <T extends object>(
   loadedState: any, // JSON from disk
@@ -68,15 +62,4 @@ const stripNonSerializable = <T>(data: T): T => {
     }
   }
   return result as T;
-};
-
-export const ensureAppData = async () => {
-  const dir = await appDataDir();
-  if (await exists(dir)) {
-    console.log('config dir available:', dir);
-    return;
-  } else {
-    await mkdir(dir);
-    console.log('config dir created at:', dir);
-  }
 };

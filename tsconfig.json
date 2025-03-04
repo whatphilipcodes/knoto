@@ -17,7 +17,8 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "removeComments": true
+    "removeComments": true,
+    "types": ["vite-plugin-glsl/ext"]
   },
   "include": ["src-front"],
   "references": [

@@ -1,0 +1,39 @@
+{
+  "cSpell.words": ["fwidth", "smoothstep"],
+  // GLSL Support
+  "[glsl]": {
+    "editor.defaultFormatter": "raczzalan.webgl-glsl-editor"
+  },
+  "webgl-glsl-editor.codeInjection": true,
+  "webgl-glsl-editor.codeInjectionSource": [
+    "#version 300 es",
+    "precision highp float;",
+    // "uniform vec3 iResolution;",
+    // "uniform float iTime;",
+    // "uniform float iTimeDelta;",
+    // "uniform int iFrame;",
+    // "uniform float iChannelTime[4];",
+    // "uniform vec3 iChannelResolution[4];",
+    // "uniform vec4 iMouse;",
+    // "uniform sampler2D iChannel0;",
+    // "uniform sampler2D iChannel1;",
+    // "uniform sampler2D iChannel2;",
+    // "uniform sampler2D iChannel3;",
+    // "uniform vec4 iDate;",
+    // "uniform float iSampleRate;",
+    //
+    // https://threejs.org/docs/index.html?q=WebGL%20Progra#api/en/renderers/webgl/WebGLProgram
+    "uniform mat4 modelMatrix;",
+    "uniform mat4 modelViewMatrix;",
+    "uniform mat4 projectionMatrix;",
+    "uniform mat4 viewMatrix;",
+    "uniform mat3 normalMatrix;",
+    "uniform vec3 cameraPosition;",
+    // syntax in v300 attribute -> in
+    "in vec3 position;",
+    "in vec3 normal;",
+    "in vec2 uv;",
+    // custom additions
+    "out vec4 pc_fragColor;"
+  ]
+}

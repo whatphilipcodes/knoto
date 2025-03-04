@@ -1,25 +1,33 @@
 import * as THREE from 'three';
 import { FC, useMemo } from 'react';
 import { Canvas } from '@react-three/fiber';
+//
+import Node from './Node';
 
 interface AtlasRendererProps {
   count?: number;
 }
 
 const AtlasRenderer: FC<AtlasRendererProps> = ({ count = 1000 }) => {
+  const testColor = new THREE.Color(0x54b882);
   const data = useMemo(() => {
-    const points = [];
+    const nodes = [];
     for (let i = 0; i < count; i++) {
-      points.push(new THREE.Vector2(Math.random(), Math.random()));
+      nodes.push({
+        pos: new THREE.Vector2(Math.random(), Math.random()),
+        col: testColor,
+      });
     }
-    return points;
+    return nodes;
   }, []);
 
-  // console.log(data);
+  console.log(data);
 
   return (
     <div className='h-full w-full rounded-md bg-neutral-900'>
-      <Canvas></Canvas>
+      <Canvas>
+        <Node />
+      </Canvas>
     </div>
   );
 };

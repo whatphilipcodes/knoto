@@ -1,9 +1,6 @@
 import './styles/app.css';
 import { useState, useEffect } from 'react';
-// import EmptyScreen from './components/EmptyScreen';
-// import APITest from './components/APITest';
-// import AtlasRenderer from './components/AtlasRenderer';
-import R3FTest from './components/AtlasRenderer/R3FTest';
+import AtlasRenderer from './components/AtlasRenderer';
 import Button from './components/Primitives/Button';
 //
 import { listen } from '@tauri-apps/api/event';
@@ -41,8 +38,7 @@ const App = () => {
   return (
     <main className='flex h-full w-full flex-col gap-4 p-8 font-normal text-neutral-950 dark:text-neutral-50'>
       <div className='flex h-full w-full shrink grow'>
-        {/* <AtlasRenderer count={1000} /> */}
-        <R3FTest />
+        <AtlasRenderer count={1000} />
       </div>
       <div className='rounded-md bg-neutral-900 p-2 ring-inset focus-within:ring-2 focus-within:ring-blue-500'>
         <textarea

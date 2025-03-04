@@ -23,7 +23,7 @@
     "@lexical/rich-text": "^0.24.0",
     "@lexical/utils": "^0.24.0",
     "@react-three/fiber": "^9.0.4",
-    "@tauri-apps/api": "^2.2.0",
+    "@tauri-apps/api": "^2.3.0",
     "@tauri-apps/plugin-dialog": "~2.2.0",
     "@tauri-apps/plugin-fs": "~2.2.0",
     "@tauri-apps/plugin-process": "~2.2.0",
@@ -37,9 +37,9 @@
   },
   "devDependencies": {
     "@iarna/toml": "^2.2.5",
-    "@tailwindcss/vite": "^4.0.7",
-    "@tauri-apps/cli": "^2.2.7",
-    "@types/node": "^22.13.4",
+    "@tailwindcss/vite": "^4.0.9",
+    "@tauri-apps/cli": "^2.3.1",
+    "@types/node": "^22.13.9",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "@types/three": "^0.173.0",
@@ -47,9 +47,9 @@
     "prettier": "3.5.1",
     "prettier-plugin-tailwindcss": "^0.6.11",
     "symlink-dir": "^6.0.4",
-    "tailwindcss": "^4.0.7",
-    "typescript": "^5.7.3",
-    "vite": "^6.1.1"
+    "tailwindcss": "^4.0.9",
+    "typescript": "^5.8.2",
+    "vite": "^6.2.0"
   },
   "packageManager": "pnpm@10.4.1+sha512.c753b6c3ad7afa13af388fa6d808035a008e30ea9993f58c6663e2bc5ff21679aa834db094987129aa4d488b86df57f7b634981b2f827cdcacc698cc0cfb88af"
 }

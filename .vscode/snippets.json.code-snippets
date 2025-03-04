@@ -19,7 +19,7 @@
   "ComponentSnippet": {
     "prefix": "rfc",
     "body": [
-      "import { FC } from 'react';",
+      "import { type FC } from 'react';",
       "",
       "interface ${1:Component}Props {}",
       "",

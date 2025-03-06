@@ -1,5 +1,5 @@
 import { FC, useMemo } from 'react';
-import { Color, Vector2, NoColorSpace } from 'three';
+import { Color, Vector2 } from 'three';
 import { Canvas } from '@react-three/fiber';
 //
 import AtlasControls from './AtlasControls';

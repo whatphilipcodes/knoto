@@ -1,8 +1,8 @@
 import { FC, useMemo } from 'react';
 import { Color, Vector2 } from 'three';
 import { Canvas } from '@react-three/fiber';
-import { MapControls } from '@react-three/drei';
 //
+import AtlasControls from './AtlasControls';
 import Nodes from './Nodes';
 
 interface AtlasRendererProps {
@@ -30,13 +30,7 @@ const AtlasRenderer: FC<AtlasRendererProps> = ({ count = 1000000 }) => {
     <div className='h-full w-full rounded-md border border-neutral-700 bg-neutral-900'>
       <Canvas className='rounded-md'>
         <Nodes data={data} />
-        <MapControls
-          minDistance={1}
-          maxDistance={100}
-          makeDefault
-          enableRotate={false}
-          screenSpacePanning={true}
-        />
+        <AtlasControls />
       </Canvas>
     </div>
   );

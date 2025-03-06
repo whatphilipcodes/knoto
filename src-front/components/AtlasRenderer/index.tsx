@@ -46,12 +46,7 @@ const AtlasRenderer: FC<AtlasRendererProps> = ({
             }
           }}
         />
-        <AtlasControls
-          bounds={new Vector2(scale * 0.5, scale * 0.5)}
-          minZoom={1}
-          maxZoom={100}
-          startZoom={5}
-        />
+        <AtlasControls bounds={new Vector2(scale * 0.5, scale * 0.5)} />
       </Canvas>
     </div>
   );

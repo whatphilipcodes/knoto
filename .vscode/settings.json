@@ -1,5 +1,5 @@
 {
-  "cSpell.words": ["fwidth", "smoothstep"],
+  "cSpell.words": ["fwidth", "smoothstep", "tauri"],
   // GLSL Support
   "[glsl]": {
     "editor.defaultFormatter": "raczzalan.webgl-glsl-editor"

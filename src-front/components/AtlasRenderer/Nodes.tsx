@@ -256,7 +256,7 @@ const Nodes: FC<NodesProps> = ({
         const worldPos = new Vector3(
           (nodePos.x - center.x) * atlasScale,
           (nodePos.y - center.y) * atlasScale,
-          0.1, // Slightly in front to avoid z-fighting
+          0,
         );
         setHoverPosition(worldPos);
 
@@ -307,7 +307,6 @@ const Nodes: FC<NodesProps> = ({
       {hoverPosition && (
         <mesh position={hoverPosition} renderOrder={1}>
           <Triangle size={nodeScale * 1.2} />
-          {/* Slightly larger than normal nodes */}
           <meshBasicMaterial
             color={hoverColor}
             depthTest={false}

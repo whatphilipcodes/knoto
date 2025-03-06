@@ -13,9 +13,9 @@ interface AtlasControlsProps {
 
 const AtlasControls: FC<AtlasControlsProps> = ({
   bounds = new Vector2(100, 100),
-  minZoom = 10,
+  minZoom = 1,
   maxZoom = 100,
-  startZoom = 50,
+  startZoom = 5,
 }) => {
   const ref = useRef<OrbitControlsImpl>(null!);
   const { camera, size } = useThree();
@@ -48,6 +48,9 @@ const AtlasControls: FC<AtlasControlsProps> = ({
       camera.position.y = -maxY;
       ref.current.target.y = -maxY;
     }
+
+    console.log('camera: ', orthoCam.position);
+    console.log('zoom: ', orthoCam.zoom);
   };
 
   // Update bounds when zoom changes
@@ -69,10 +72,10 @@ const AtlasControls: FC<AtlasControlsProps> = ({
       />
       <OrthographicCamera
         makeDefault
-        position={[0, 0, 10]}
+        position={[0, 0, 1]}
         zoom={startZoom}
-        far={maxZoom}
-        near={minZoom}
+        near={0.1}
+        far={1}
       />
     </>
   );

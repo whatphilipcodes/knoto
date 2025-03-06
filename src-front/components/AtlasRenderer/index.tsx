@@ -27,8 +27,8 @@ const AtlasRenderer: FC<AtlasRendererProps> = ({ count = 1000000 }) => {
   }, []);
 
   return (
-    <div className='h-full w-full rounded-md bg-neutral-900'>
-      <Canvas>
+    <div className='h-full w-full rounded-md border border-neutral-700 bg-neutral-900'>
+      <Canvas className='rounded-md'>
         <Nodes data={data} />
         <MapControls
           minDistance={1}

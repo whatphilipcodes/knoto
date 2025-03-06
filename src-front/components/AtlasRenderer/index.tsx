@@ -11,8 +11,8 @@ interface AtlasRendererProps {
 }
 
 const AtlasRenderer: FC<AtlasRendererProps> = ({
-  count = 1000000,
-  scale = 1000,
+  count = 1000,
+  scale = 100,
 }) => {
   const testColors: Color[] = [];
   testColors.push(new Color(0x8387f1));
@@ -23,6 +23,7 @@ const AtlasRenderer: FC<AtlasRendererProps> = ({
     const nodes = [];
     for (let i = 0; i < count; i++) {
       nodes.push({
+        path: 'path/to/file_' + i,
         pos: new Vector2(Math.random(), Math.random()),
         col: testColors[i % testColors.length],
       });
@@ -34,7 +35,23 @@ const AtlasRenderer: FC<AtlasRendererProps> = ({
     <div className='h-full w-full rounded-md border border-neutral-700 bg-neutral-900'>
       <Canvas className='rounded-md' flat>
         <Nodes data={data} atlasScale={scale} />
-        <AtlasControls bounds={new Vector2(scale * 0.5, scale * 0.5)} />
+        <Nodes
+          data={data}
+          nodeScale={1}
+          atlasScale={scale}
+          onNodeHover={(id, index) => {
+            if (id !== null) {
+              console.log(`Hovering over node ${id} at index ${index}`);
+              // Update UI or state based on the hovered node
+            }
+          }}
+        />
+        <AtlasControls
+          bounds={new Vector2(scale * 0.5, scale * 0.5)}
+          minZoom={1}
+          maxZoom={100}
+          startZoom={5}
+        />
       </Canvas>
     </div>
   );

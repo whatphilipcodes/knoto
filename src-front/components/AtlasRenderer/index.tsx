@@ -32,8 +32,8 @@ const AtlasRenderer: FC<AtlasRendererProps> = ({
   }, []);
 
   return (
-    <div className='h-full w-full rounded-md border border-neutral-700 bg-neutral-900'>
-      <Canvas className='rounded-md' flat>
+    <div className='flex h-full w-full rounded-md border border-neutral-700 bg-neutral-900'>
+      <Canvas flat>
         <Nodes data={data} atlasScale={scale} />
         <Nodes
           data={data}

@@ -36,8 +36,8 @@ const App = () => {
 
   return (
     <>
-      <Menu />
-      <main className='flex h-full w-full flex-col gap-4 p-8 font-normal text-neutral-950 dark:text-neutral-50'>
+      <main className='flex h-full w-full flex-col gap-4 p-4 font-normal text-neutral-950 dark:text-neutral-50'>
+        <Menu />
         <div className='flex h-full w-full shrink grow'>
           <AtlasRenderer />
         </div>

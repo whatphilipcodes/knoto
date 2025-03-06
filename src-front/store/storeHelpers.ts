@@ -1,4 +1,5 @@
 import { readTextFile, BaseDirectory } from '@tauri-apps/plugin-fs';
+import { appConfigDir, sep } from '@tauri-apps/api/path';
 
 export const validateState = <T extends object>(
   loadedState: any, // JSON from disk
@@ -25,7 +26,10 @@ export const loadState = async <T extends object>(
   baseDir: BaseDirectory,
   defaultState: T,
 ): Promise<T> => {
-  console.log('Loading State from file:', filePath);
+  console.log(
+    'Loading State from file:',
+    (await appConfigDir()) + sep() + filePath,
+  );
   try {
     const data = JSON.parse(await readTextFile(filePath, { baseDir: baseDir }));
     if (!data?.state) {

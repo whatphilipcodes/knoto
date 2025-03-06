@@ -1,5 +1,8 @@
 import { type FC, useLayoutEffect } from 'react';
 import { platform } from '@tauri-apps/plugin-os';
+//
+import { useAtlasStore } from '../../store/atlasStore';
+import MenuComponent from './menuComponent';
 import { createMacMenu } from './menuMac';
 
 interface MenuProps {}
@@ -30,11 +33,23 @@ const Menu: FC<MenuProps> = () => {
     };
   }, []);
 
+  const atlas = useAtlasStore();
+
   switch (current) {
     case 'macos':
-      return <></>;
+      return (
+        <div className='flex w-full flex-row justify-between text-neutral-500'>
+          <div>{atlas.atlasDirRoot ?? 'no atlas opened...'}</div>
+        </div>
+      );
     default:
-      return <div>windows</div>;
+      return (
+        <div className='flex w-full flex-row justify-between text-neutral-500'>
+          <div>{atlas.atlasDirRoot ?? 'no atlas opened...'}</div>
+          <MenuComponent />
+        </div>
+      );
   }
 };
+
 export default Menu;

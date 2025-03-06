@@ -6,7 +6,7 @@ import {
 } from '@tauri-apps/api/menu';
 import { emit } from '@tauri-apps/api/event';
 
-export const createMenu = async () => {
+export const createMacMenu = async () => {
   // predefined
   const separator = await PredefinedMenuItem.new({
     item: 'Separator',

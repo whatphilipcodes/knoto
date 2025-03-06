@@ -1,4 +1,4 @@
-import { Vector2, Color, InstancedMesh, Object3D } from 'three';
+import { Vector2, Color, InstancedMesh, Object3D, Euler } from 'three';
 import { type FC, useRef, useLayoutEffect, useMemo } from 'react';
 import Triangle from './Triangle';
 
@@ -51,15 +51,25 @@ const Nodes: FC<NodesProps> = ({
   }, [data, atlasScale, center]);
 
   return (
-    <instancedMesh ref={ref} args={[undefined, undefined, data.length]}>
-      <Triangle size={nodeScale}>
-        <instancedBufferAttribute
-          attach='attributes-color'
-          args={[colors, 3]}
+    <>
+      <instancedMesh ref={ref} args={[undefined, undefined, data.length]}>
+        <Triangle size={nodeScale}>
+          <instancedBufferAttribute
+            attach='attributes-color'
+            args={[colors, 3]}
+          />
+        </Triangle>
+        <meshBasicMaterial vertexColors depthTest={false} depthWrite={false} />
+      </instancedMesh>
+      <mesh rotation={new Euler(0, 0, Math.PI)}>
+        <Triangle size={0.2} />
+        <meshBasicMaterial
+          color={0xf6c99f}
+          depthTest={false}
+          depthWrite={false}
         />
-      </Triangle>
-      <meshBasicMaterial vertexColors depthTest={false} depthWrite={false} />
-    </instancedMesh>
+      </mesh>
+    </>
   );
 };
 export default Nodes;

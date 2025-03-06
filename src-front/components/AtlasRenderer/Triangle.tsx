@@ -2,9 +2,9 @@ import { ThreeElements } from '@react-three/fiber';
 import { BufferGeometry, BufferAttribute } from 'three';
 import { type FC, useLayoutEffect, useRef } from 'react';
 
-type TriangleProps = ThreeElements['bufferGeometry'] & { size: number };
+type TriangleProps = ThreeElements['bufferGeometry'] & { size?: number };
 
-const Triangle: FC<TriangleProps> = ({ children, size }) => {
+const Triangle: FC<TriangleProps> = ({ children, size = 0.1 }) => {
   const geo = useRef<BufferGeometry>(null!);
 
   useLayoutEffect(() => {

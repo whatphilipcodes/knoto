@@ -56,6 +56,9 @@ importers:
       three:
         specifier: ^0.173.0
         version: 0.173.0
+      three-stdlib:
+        specifier: ^2.35.14
+        version: 2.35.14(three@0.173.0)
       zustand:
         specifier: ^5.0.3
         version: 5.0.3(@types/react@19.0.10)(react@19.0.0)(use-sync-external-store@1.4.0(react@19.0.0))

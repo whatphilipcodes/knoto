@@ -38,7 +38,7 @@ const App = () => {
   return (
     <main className='flex h-full w-full flex-col gap-4 p-8 font-normal text-neutral-950 dark:text-neutral-50'>
       <div className='flex h-full w-full shrink grow'>
-        <AtlasRenderer count={1000} />
+        <AtlasRenderer />
       </div>
       <div className='rounded-md bg-neutral-900 p-2 ring-inset focus-within:ring-2 focus-within:ring-blue-500'>
         <textarea

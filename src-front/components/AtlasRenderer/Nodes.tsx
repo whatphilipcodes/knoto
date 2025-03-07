@@ -295,7 +295,7 @@ const Nodes: FC<NodesProps> = ({
 
       {/* Static triangle for the map center */}
       <mesh rotation={new Euler(0, 0, Math.PI)}>
-        <Triangle size={0.2} />
+        <Triangle size={nodeScale} />
         <meshBasicMaterial
           color={0xf6c99f}
           depthTest={false}

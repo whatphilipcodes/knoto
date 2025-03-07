@@ -41,7 +41,7 @@ const App = () => {
         <div className='flex h-full w-full shrink grow'>
           <AtlasRenderer />
         </div>
-        <div className='rounded-md bg-neutral-900 p-2 ring-inset focus-within:ring-2 focus-within:ring-blue-500'>
+        {/* <div className='rounded-md bg-neutral-900 p-2 ring-inset focus-within:ring-2 focus-within:ring-blue-500'>
           <textarea
             value={inputValue}
             placeholder='Say something nice...'
@@ -55,7 +55,7 @@ const App = () => {
           }}
         >
           save to atlas store
-        </Button>
+        </Button> */}
       </main>
     </>
   );

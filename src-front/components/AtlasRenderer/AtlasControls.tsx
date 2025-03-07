@@ -5,21 +5,20 @@ import { Vector2, OrthographicCamera as ThreeOrthographicCamera } from 'three';
 import { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 
 interface AtlasControlsProps {
-  bounds?: Vector2;
-  minZoom?: number;
-  maxZoom?: number;
-  startZoom?: number;
+  bounds: Vector2;
 }
 
-const AtlasControls: FC<AtlasControlsProps> = ({
-  bounds = new Vector2(100, 100),
-  minZoom = 1,
-  maxZoom = 100,
-  startZoom = 5,
-}) => {
+const AtlasControls: FC<AtlasControlsProps> = ({ bounds }) => {
   const ref = useRef<OrbitControlsImpl>(null!);
   const { camera, size } = useThree();
   const orthoCam = camera as ThreeOrthographicCamera;
+
+  // Calculate optimal zoom based on bounds and viewport size
+  const calculateOptimalZoom = () => {
+    // Since width is typically greater, we only use width for zoom calculation
+    // This ensures content matches the wider dimension (usually width)
+    return size.width / (bounds.x * 2);
+  };
 
   const handleChange = () => {
     if (!bounds) return;
@@ -32,40 +31,55 @@ const AtlasControls: FC<AtlasControlsProps> = ({
     const maxX = bounds.x - visibleWidth / 2;
     const maxY = bounds.y - visibleHeight / 2;
 
-    // Constrain camera position
-    if (camera.position.x > maxX) {
-      camera.position.x = maxX;
-      ref.current.target.x = maxX;
-    } else if (camera.position.x < -maxX) {
-      camera.position.x = -maxX;
-      ref.current.target.x = -maxX;
-    }
+    // Don't allow panning beyond bounds
+    camera.position.x = Math.max(-maxX, Math.min(maxX, camera.position.x));
+    camera.position.y = Math.max(-maxY, Math.min(maxY, camera.position.y));
 
-    if (camera.position.y > maxY) {
-      camera.position.y = maxY;
-      ref.current.target.y = maxY;
-    } else if (camera.position.y < -maxY) {
-      camera.position.y = -maxY;
-      ref.current.target.y = -maxY;
-    }
-
-    console.log('camera: ', orthoCam.position);
-    console.log('zoom: ', orthoCam.zoom);
+    // Update target to match camera position to avoid rubber-band effects
+    ref.current.target.x = camera.position.x;
+    ref.current.target.y = camera.position.y;
   };
 
-  // Update bounds when zoom changes
+  // Set initial zoom and handle resizes
   useEffect(() => {
-    if (bounds) {
+    // Calculate dynamic zoom range
+    const dynamicMinZoom = calculateOptimalZoom();
+    const dynamicMaxZoom = dynamicMinZoom * 10;
+
+    // Set initial zoom to middle of the range
+    const initialZoom = (dynamicMinZoom + dynamicMaxZoom) / 2;
+    orthoCam.zoom = initialZoom;
+    orthoCam.updateProjectionMatrix();
+
+    // Apply constraints immediately
+    handleChange();
+
+    // Handler for window resize
+    const handleResize = () => {
+      const newDynamicMinZoom = calculateOptimalZoom();
+      const newDynamicMaxZoom = newDynamicMinZoom * 10;
+      orthoCam.zoom = Math.min(
+        Math.max(orthoCam.zoom, newDynamicMinZoom),
+        newDynamicMaxZoom,
+      );
+      orthoCam.updateProjectionMatrix();
       handleChange();
-    }
-  }, [orthoCam.zoom, bounds]);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [bounds, size.width, size.height]);
+
+  const dynamicMinZoom = size.width / (bounds.x * 2);
+  const dynamicMaxZoom = dynamicMinZoom * 10;
+  const initialZoom = (dynamicMinZoom + dynamicMaxZoom) / 2;
 
   return (
     <>
       <MapControls
         ref={ref}
-        minZoom={minZoom}
-        maxZoom={maxZoom}
+        minZoom={dynamicMinZoom}
+        maxZoom={dynamicMaxZoom}
         enableRotate={false}
         screenSpacePanning={true}
         onChange={handleChange}
@@ -73,7 +87,7 @@ const AtlasControls: FC<AtlasControlsProps> = ({
       <OrthographicCamera
         makeDefault
         position={[0, 0, 1]}
-        zoom={startZoom}
+        zoom={initialZoom}
         near={0.1}
         far={1}
       />

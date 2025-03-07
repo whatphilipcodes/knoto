@@ -16,21 +16,31 @@ const AtlasControls: FC<AtlasControlsProps> = ({ bounds, maxZoom = 100 }) => {
 
   // Calculate optimal zoom based on bounds and viewport size
   const calculateOptimalZoom = () => {
-    // Since width is typically greater, we only use width for zoom calculation
-    // This ensures content matches the wider dimension (usually width)
-    return size.width / (bounds.x * 2);
+    // Calculate zoom factors for both dimensions
+    const widthZoomFactor = size.width / (bounds.x * 2);
+    const heightZoomFactor = size.height / (bounds.y * 2);
+
+    // Use the smaller zoom factor to ensure entire content is visible
+    return Math.max(widthZoomFactor, heightZoomFactor);
   };
 
   const handleChange = () => {
     if (!bounds) return;
+
+    // Enforce minimum zoom to prevent seeing beyond bounds
+    const minZoom = calculateOptimalZoom();
+    if (orthoCam.zoom < minZoom) {
+      orthoCam.zoom = minZoom;
+      orthoCam.updateProjectionMatrix();
+    }
 
     // Calculate visible area dimensions based on current zoom
     const visibleWidth = size.width / orthoCam.zoom;
     const visibleHeight = size.height / orthoCam.zoom;
 
     // Calculate maximum allowed positions to keep the camera within bounds
-    const maxX = bounds.x - visibleWidth / 2;
-    const maxY = bounds.y - visibleHeight / 2;
+    const maxX = Math.max(0, bounds.x - visibleWidth / 2);
+    const maxY = Math.max(0, bounds.y - visibleHeight / 2);
 
     // Don't allow panning beyond bounds
     camera.position.x = Math.max(-maxX, Math.min(maxX, camera.position.x));
@@ -59,6 +69,8 @@ const AtlasControls: FC<AtlasControlsProps> = ({ bounds, maxZoom = 100 }) => {
     const handleResize = () => {
       const newDynamicMinZoom = calculateOptimalZoom();
       const newDynamicMaxZoom = newDynamicMinZoom * 10;
+
+      // Ensure camera zoom is still within valid range after resize
       orthoCam.zoom = Math.min(
         Math.max(orthoCam.zoom, newDynamicMinZoom),
         newDynamicMaxZoom,
@@ -71,7 +83,7 @@ const AtlasControls: FC<AtlasControlsProps> = ({ bounds, maxZoom = 100 }) => {
     return () => window.removeEventListener('resize', handleResize);
   }, [bounds, size.width, size.height]);
 
-  const dynamicMinZoom = size.width / (bounds.x * 2);
+  const dynamicMinZoom = calculateOptimalZoom();
   const initialZoom = (dynamicMinZoom + maxZoom) / 2;
 
   return (
@@ -83,6 +95,8 @@ const AtlasControls: FC<AtlasControlsProps> = ({ bounds, maxZoom = 100 }) => {
         enableRotate={false}
         screenSpacePanning={true}
         onChange={handleChange}
+        onStart={() => handleChange()} // Also enforce constraints when interaction starts
+        onEnd={() => handleChange()} // And when interaction ends
       />
       <OrthographicCamera
         makeDefault

@@ -1,19 +1,22 @@
 import { memo } from 'react';
 import { Vector2, Color } from 'three';
 import Triangle from './Triangle';
+//
+import { emit } from '@tauri-apps/api/event';
+//
 import { useNodeHover, NodeData } from './useNodeHover';
+import { useMouseClick } from './useMouseClick';
 
-interface HoverHighlightProps {
+interface HoverSelectProps {
   data: NodeData[];
   nodeScale: number;
   atlasScale: number;
   center: Vector2;
   hoverColor: Color;
   onNodeHover?: (nodeId: string | number | null, index: number | null) => void;
-  debug?: boolean;
 }
 
-const HoverHighlight = memo(
+const HoverSelect = memo(
   ({
     data,
     nodeScale,
@@ -21,21 +24,26 @@ const HoverHighlight = memo(
     center,
     hoverColor,
     onNodeHover,
-    debug = false,
-  }: HoverHighlightProps) => {
-    const { hoverPosition } = useNodeHover({
+  }: HoverSelectProps) => {
+    const { hoverPosition, hoverIndex } = useNodeHover({
       data,
       nodeScale,
       atlasScale,
       center,
       onNodeHover,
-      debug,
     });
+
+    const handleClick = () => {
+      emit('atlas:open-editor', {
+        file: hoverIndex ? data[hoverIndex].path : undefined,
+      });
+    };
+    const { handlers } = useMouseClick(handleClick);
 
     if (!hoverPosition) return null;
 
     return (
-      <mesh position={hoverPosition} renderOrder={1}>
+      <mesh position={hoverPosition} renderOrder={1} {...handlers}>
         <Triangle size={nodeScale * 1.2} />
         <meshBasicMaterial
           color={hoverColor}
@@ -47,4 +55,4 @@ const HoverHighlight = memo(
   },
 );
 
-export default HoverHighlight;
+export default HoverSelect;

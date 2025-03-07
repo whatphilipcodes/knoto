@@ -8,6 +8,7 @@ import { listen } from '@tauri-apps/api/event';
 //
 import { useApplicationStore } from './store/applicationStore';
 import { useAtlasStore, subscribeColToApp } from './store/atlasStore';
+//
 
 const App = () => {
   const [inputValue, setInputValue] = useState('');
@@ -22,6 +23,9 @@ const App = () => {
       asyncCleanup.push(
         await listen('menu:open-atlas', async () => {
           await application.openAtlasDir();
+        }),
+        await listen('atlas:open-editor', async (data) => {
+          console.log('atlas:open-editor', data);
         }),
       );
       return asyncCleanup;

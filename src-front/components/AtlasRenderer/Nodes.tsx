@@ -1,6 +1,6 @@
 import { Vector2, Color, InstancedMesh, Object3D, Euler } from 'three';
 import { type FC, useRef, useLayoutEffect, useMemo, useEffect } from 'react';
-import HoverHighlight from './HoverHighlight';
+import HoverSelect from './HoverSelect';
 import Triangle from './Triangle';
 
 interface NodesProps {
@@ -106,7 +106,7 @@ const Nodes: FC<NodesProps> = ({
       </mesh>
 
       {/* All hover logic now contained in this component */}
-      <HoverHighlight
+      <HoverSelect
         data={data}
         nodeScale={nodeScale}
         atlasScale={atlasScale}

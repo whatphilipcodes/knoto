@@ -6,13 +6,15 @@ import AtlasControls from './AtlasControls';
 import Nodes from './Nodes';
 
 interface AtlasRendererProps {
-  count?: number;
-  scale?: number;
+  _testCount?: number;
+  atlasScale?: number;
+  nodeScale?: number;
 }
 
 const AtlasRenderer: FC<AtlasRendererProps> = ({
-  count = 1000000,
-  scale = 1000,
+  _testCount = 1000000,
+  atlasScale = 1000,
+  nodeScale = 0.2,
 }) => {
   const testColors: Color[] = [];
   testColors.push(new Color(0x8387f1));
@@ -21,7 +23,7 @@ const AtlasRenderer: FC<AtlasRendererProps> = ({
 
   const data = useMemo(() => {
     const nodes = [];
-    for (let i = 0; i < count; i++) {
+    for (let i = 0; i < _testCount; i++) {
       nodes.push({
         path: 'path/to/file_' + i,
         pos: new Vector2(Math.random(), Math.random()),
@@ -35,18 +37,10 @@ const AtlasRenderer: FC<AtlasRendererProps> = ({
   return (
     <div className='flex h-full w-full rounded-md border border-neutral-700 bg-neutral-900'>
       <Canvas className='rounded-md' flat>
-        <Nodes
-          data={data}
-          nodeScale={0.2}
-          atlasScale={scale}
-          onNodeHover={(id, index) => {
-            if (id !== null) {
-              console.log(`Hovering over node ${id} at index ${index}`);
-              // Update UI or state based on the hovered node
-            }
-          }}
+        <Nodes data={data} nodeScale={nodeScale} atlasScale={atlasScale} />
+        <AtlasControls
+          bounds={new Vector2(atlasScale * 0.5 + 4, atlasScale * 0.5 + 4)}
         />
-        <AtlasControls bounds={new Vector2(scale * 0.5 + 4, scale * 0.5 + 4)} />
       </Canvas>
     </div>
   );

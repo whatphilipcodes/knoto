@@ -1,9 +1,11 @@
 import { FC, useMemo } from 'react';
 import { Color, Vector2 } from 'three';
 import { Canvas } from '@react-three/fiber';
-//
 import AtlasControls from './AtlasControls';
 import Nodes from './Nodes';
+import Button from '../Primitives/Button';
+import { Plus } from 'lucide-react';
+import { emit } from '@tauri-apps/api/event';
 
 interface AtlasRendererProps {
   _testCount?: number;
@@ -42,6 +44,11 @@ const AtlasRenderer: FC<AtlasRendererProps> = ({
           bounds={new Vector2(atlasScale * 0.5 + 4, atlasScale * 0.5 + 4)}
         />
       </Canvas>
+      <div className='absolute bottom-0 right-0 p-4'>
+        <Button onClick={() => emit('atlas:new')} className='h-10 w-10 px-0'>
+          <Plus size={20} />
+        </Button>
+      </div>
     </div>
   );
 };

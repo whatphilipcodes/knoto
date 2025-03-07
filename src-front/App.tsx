@@ -24,8 +24,11 @@ const App = () => {
         await listen('menu:open-atlas', async () => {
           await application.openAtlasDir();
         }),
-        await listen('atlas:open-editor', async (data) => {
-          console.log('atlas:open-editor', data);
+        await listen('atlas:open', async (data) => {
+          console.log('atlas:open', data);
+        }),
+        await listen('atlas:new', async () => {
+          console.log('atlas:new');
         }),
       );
       return asyncCleanup;

@@ -34,7 +34,7 @@ const HoverSelect = memo(
     });
 
     const handleClick = () => {
-      emit('atlas:open-editor', {
+      emit('atlas:open', {
         file: hoverIndex ? data[hoverIndex].path : undefined,
       });
     };

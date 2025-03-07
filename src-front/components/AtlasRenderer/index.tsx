@@ -35,7 +35,7 @@ const AtlasRenderer: FC<AtlasRendererProps> = ({
 
   // to-do: fix canvas scaling (shrink)
   return (
-    <div className='flex h-full w-full rounded-md border border-neutral-700 bg-neutral-900'>
+    <div className='relative flex h-full w-full rounded-md border border-neutral-700 bg-neutral-900'>
       <Canvas className='rounded-md' flat>
         <Nodes data={data} nodeScale={nodeScale} atlasScale={atlasScale} />
         <AtlasControls

@@ -6,9 +6,10 @@ import { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 
 interface AtlasControlsProps {
   bounds: Vector2;
+  maxZoom?: number;
 }
 
-const AtlasControls: FC<AtlasControlsProps> = ({ bounds }) => {
+const AtlasControls: FC<AtlasControlsProps> = ({ bounds, maxZoom = 100 }) => {
   const ref = useRef<OrbitControlsImpl>(null!);
   const { camera, size } = useThree();
   const orthoCam = camera as ThreeOrthographicCamera;
@@ -71,15 +72,14 @@ const AtlasControls: FC<AtlasControlsProps> = ({ bounds }) => {
   }, [bounds, size.width, size.height]);
 
   const dynamicMinZoom = size.width / (bounds.x * 2);
-  const dynamicMaxZoom = dynamicMinZoom * 10;
-  const initialZoom = (dynamicMinZoom + dynamicMaxZoom) / 2;
+  const initialZoom = (dynamicMinZoom + maxZoom) / 2;
 
   return (
     <>
       <MapControls
         ref={ref}
         minZoom={dynamicMinZoom}
-        maxZoom={dynamicMaxZoom}
+        maxZoom={maxZoom}
         enableRotate={false}
         screenSpacePanning={true}
         onChange={handleChange}

@@ -1,5 +1,6 @@
 import { type FC, useLayoutEffect, useMemo } from 'react';
 import { platform } from '@tauri-apps/plugin-os';
+import { sep } from '@tauri-apps/api/path';
 //
 import { useAtlasStore } from '../../store/atlasStore';
 import MenuComponent from './menuComponent';
@@ -37,7 +38,7 @@ const Menu: FC<MenuProps> = () => {
 
   const atlasName = useMemo(() => {
     if (!atlas.atlasDirRoot) return 'no atlas opened';
-    const parts = atlas.atlasDirRoot.split('/');
+    const parts = atlas.atlasDirRoot.split(sep());
     return parts[parts.length - 1];
   }, [atlas.atlasDirRoot]);
 

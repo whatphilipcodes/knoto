@@ -51,7 +51,7 @@ const Menu: FC<MenuProps> = () => {
       );
     default:
       return (
-        <div className='flex w-full flex-row justify-between text-neutral-500'>
+        <div className='flex w-full flex-row items-center justify-between text-neutral-500'>
           <div>{atlasName}</div>
           <MenuComponent />
         </div>

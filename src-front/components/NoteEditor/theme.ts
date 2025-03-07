@@ -1,5 +1,5 @@
 export default {
-  root: 'p-4 h-full w-full',
+  root: 'p-4 h-full w-full rounded-md border-neutral-500',
   link: 'cursor-pointer',
   text: {
     bold: 'font-semibold',

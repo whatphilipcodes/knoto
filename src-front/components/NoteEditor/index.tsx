@@ -36,7 +36,7 @@ const Placeholder = () => {
   );
 };
 
-const TextEditor = () => {
+const NoteEditor = () => {
   const initialConfig = {
     namespace: 'text-editor',
     theme,
@@ -62,4 +62,4 @@ const TextEditor = () => {
   );
 };
 
-export default TextEditor;
+export default NoteEditor;

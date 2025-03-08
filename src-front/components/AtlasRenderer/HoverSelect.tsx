@@ -1,5 +1,6 @@
-import { memo } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { Vector2, Color } from 'three';
+import { useThree } from '@react-three/fiber';
 import Triangle from './Triangle';
 //
 import { emit } from '@tauri-apps/api/event';
@@ -25,6 +26,36 @@ const HoverSelect = memo(
     hoverColor,
     onNodeHover,
   }: HoverSelectProps) => {
+    const [isMouseOverCanvas, setIsMouseOverCanvas] = useState(false);
+    const { gl } = useThree();
+
+    useEffect(() => {
+      const canvas = gl.domElement;
+
+      const handleMouseEnter = () => setIsMouseOverCanvas(true);
+      const handleMouseLeave = () => setIsMouseOverCanvas(false);
+
+      canvas.addEventListener('mouseenter', handleMouseEnter);
+      canvas.addEventListener('mouseleave', handleMouseLeave);
+
+      // Initialize state based on whether mouse is already over canvas
+      const rect = canvas.getBoundingClientRect();
+      const { clientX, clientY } = new MouseEvent('mousemove');
+      if (
+        clientX >= rect.left &&
+        clientX <= rect.right &&
+        clientY >= rect.top &&
+        clientY <= rect.bottom
+      ) {
+        setIsMouseOverCanvas(true);
+      }
+
+      return () => {
+        canvas.removeEventListener('mouseenter', handleMouseEnter);
+        canvas.removeEventListener('mouseleave', handleMouseLeave);
+      };
+    }, [gl]);
+
     const { hoverPosition, hoverIndex } = useNodeHover({
       data,
       nodeScale,
@@ -40,7 +71,7 @@ const HoverSelect = memo(
     };
     const { handlers } = useMouseClick(handleClick);
 
-    if (!hoverPosition) return null;
+    if (!hoverPosition || !isMouseOverCanvas) return null;
 
     return (
       <mesh position={hoverPosition} renderOrder={1} {...handlers}>

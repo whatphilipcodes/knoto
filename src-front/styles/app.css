@@ -5,6 +5,10 @@
   --font-mono: 'GeistMono';
 }
 
+@utility underline-line-through {
+  text-decoration-line: underline line-through;
+}
+
 @font-face {
   font-family: 'Geist';
   src: url('/fonts/geist/Geist[wght].ttf') format('truetype');

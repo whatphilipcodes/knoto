@@ -8,6 +8,7 @@ const theme: EditorThemeClasses = {
     underline: 'twd underline',
     italic: 'twd italic',
     strikethrough: 'twd line-through',
+    underlineStrikethrough: 'twd underline-line-through',
   },
 };
 export default theme;

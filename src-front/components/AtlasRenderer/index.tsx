@@ -35,9 +35,17 @@ const AtlasRenderer: FC<AtlasRendererProps> = ({
     return nodes;
   }, []);
 
+  // split-view: emit blur event
+  const focusAtlas = () => {
+    document.dispatchEvent(new CustomEvent('blur:text-editor'));
+  };
+
   // to-do: fix canvas scaling (shrink)
   return (
-    <div className='relative flex h-full w-full rounded-md border border-neutral-700 bg-neutral-900'>
+    <div
+      className='relative flex h-full w-full rounded-md border border-neutral-700 bg-neutral-900'
+      onMouseDown={focusAtlas}
+    >
       <Canvas className='rounded-md' flat>
         <Nodes data={data} nodeScale={nodeScale} atlasScale={atlasScale} />
         <AtlasControls

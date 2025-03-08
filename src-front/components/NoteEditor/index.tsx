@@ -1,12 +1,12 @@
-// import { $getRoot, $getSelection } from 'lexical';
-// import { useEffect } from 'react';
-
-import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
-import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
-import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
+
+// plugins
+import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
+import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
+import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
+import GracefulBlur from './plugins/GracefulBlur';
 
 // md support
 // import {
@@ -21,7 +21,6 @@ import { HeadingNode } from '@lexical/rich-text';
 // import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 // import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin';
 
-// tailwind styling
 import theme from './theme';
 
 const onError = (error: Error) => {
@@ -31,7 +30,7 @@ const onError = (error: Error) => {
 const Placeholder = () => {
   return (
     <div className='pointer-events-none absolute left-[1.125rem] top-[1.125rem] opacity-50'>
-      Start writing...
+      Write something nice...
     </div>
   );
 };
@@ -52,11 +51,12 @@ const NoteEditor = () => {
           placeholder={<Placeholder />}
           ErrorBoundary={LexicalErrorBoundary}
         />
+        {/* <LinkPlugin /> */}
+        {/* <ListPlugin /> */}
+        {/* <MarkdownShortcutPlugin transformers={TRANSFORMERS} /> */}
+        {/* <AutoFocusPlugin /> */}
         <HistoryPlugin />
-        <AutoFocusPlugin />
-        {/* <LinkPlugin />
-        <ListPlugin />
-        <MarkdownShortcutPlugin transformers={TRANSFORMERS} /> */}
+        <GracefulBlur />
       </LexicalComposer>
     </div>
   );

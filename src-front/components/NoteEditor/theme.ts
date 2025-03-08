@@ -1,5 +1,7 @@
-export default {
-  root: 'twd h-full w-full p-4 rounded-md border border-neutral-500 focus:border-emerald-500 focus:outline-none',
+import type { EditorThemeClasses } from 'lexical';
+
+const theme: EditorThemeClasses = {
+  root: 'twd h-full w-full p-4 rounded-md border border-neutral-700 focus:border-teal-500 focus:outline-none',
   link: 'twd cursor-pointer',
   text: {
     bold: 'twd font-semibold',
@@ -9,3 +11,4 @@ export default {
     // underlineStrikethrough: 'twd line-through underline',
   },
 };
+export default theme;

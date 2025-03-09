@@ -8,7 +8,6 @@ import { listen } from '@tauri-apps/api/event';
 //
 import { useApplicationStore } from './store/applicationStore';
 import { subscribeColToApp } from './store/atlasStore';
-//
 
 const App = () => {
   const application = useApplicationStore();

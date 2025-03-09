@@ -37,10 +37,10 @@ const Menu: FC<MenuProps> = () => {
   }, []);
 
   const atlasName = useMemo(() => {
-    if (!atlas.atlasDirRoot) return 'no atlas opened';
-    const parts = atlas.atlasDirRoot.split(sep());
+    if (!atlas.atlasRootDir) return 'no atlas opened';
+    const parts = atlas.atlasRootDir.split(sep());
     return parts[parts.length - 1];
-  }, [atlas.atlasDirRoot]);
+  }, [atlas.atlasRootDir]);
 
   switch (current) {
     case 'macos':

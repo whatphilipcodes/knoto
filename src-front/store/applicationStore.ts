@@ -46,7 +46,9 @@ export const useApplicationStore = create<ApplicationState>()(
         },
         openAtlasDir: async () => {
           const activeAtlasDir = await openDir();
-          if (activeAtlasDir) set({ activeAtlasDir });
+          if (activeAtlasDir) {
+            set({ activeAtlasDir });
+          }
         },
       })),
     ),

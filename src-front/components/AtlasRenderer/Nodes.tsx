@@ -113,7 +113,6 @@ const Nodes: FC<NodesProps> = ({
         center={center}
         hoverColor={hoverColor}
         onNodeHover={onNodeHover}
-        debug={debug}
       />
     </>
   );

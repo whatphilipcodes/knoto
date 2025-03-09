@@ -7,30 +7,31 @@ import { logger } from './middleware/logger';
 import { loadState } from './storeHelpers';
 import { withPersistentStorage } from './middleware/withPersistentStorage';
 import { useApplicationStore } from './applicationStore';
+import { AtlasData } from '../utils/types';
 
 const defaultAtlasState = {
-  atlasDirRoot: undefined as string | undefined,
+  atlasRootDir: undefined as string | undefined,
   atlasSubdirNotes: 'notes',
-  atlasStoreName: 'atlas-data.json',
+  atlasStoreName: 'atlas-config.json',
   atlasDatabaseName: 'atlas.db',
 };
 
 type AtlasState = typeof defaultAtlasState & {
-  // test: (val: string) => void;
+  setFullState: (newState: Omit<AtlasState, 'setFullState'>) => void;
 };
 
 export const useAtlasStore = create<AtlasState>()(
   logger(
     withPersistentStorage<AtlasState>((get) => {
       const state = get();
-      return state?.atlasDirRoot
-        ? `${state.atlasDirRoot}${sep()}${state.atlasStoreName}`
+      return state?.atlasRootDir
+        ? `${state.atlasRootDir}${sep()}${state.atlasStoreName}`
         : undefined;
-    })((_set) => ({
+    })((set) => ({
       ...defaultAtlasState,
-      // test: (atlasDatabaseName) => {
-      //   set({ atlasDatabaseName });
-      // },
+      setFullState: (newState) => {
+        set(newState);
+      },
     })),
   ),
 );
@@ -44,21 +45,31 @@ export const subscribeColToApp = () => {
       if (!newDir) return;
       const merged = {
         ...useAtlasStore.getInitialState(),
-        atlasDirRoot: newDir,
+        atlasRootDir: newDir,
       };
       await initAtlasDir(merged);
       await loadState<AtlasState>(
-        `${merged.atlasDirRoot}${sep()}${merged.atlasStoreName}`,
+        `${merged.atlasRootDir}${sep()}${merged.atlasStoreName}`,
         BaseDirectory.Home,
         merged,
-      ).then((newState) => useAtlasStore.setState(newState));
+      ).then((newState) => useAtlasStore.getState().setFullState(newState));
+
+      const api = useApplicationStore.getState().backendAPI;
+      const atlas = useAtlasStore.getState();
+      if (!atlas.atlasRootDir)
+        throw new Error('no atlasRootDir set in atlas store');
+      const data: AtlasData = {
+        root: atlas.atlasRootDir,
+        id_database: atlas.atlasDatabaseName,
+      };
+      await api?.post('/api/v1/set-atlas', data);
     },
     { fireImmediately: true },
   );
 };
 
 const initAtlasDir = async (state: AtlasState) => {
-  const noteSub = `${state.atlasDirRoot}${sep()}${state.atlasSubdirNotes}`;
+  const noteSub = `${state.atlasRootDir}${sep()}${state.atlasSubdirNotes}`;
   if (!(await exists(noteSub, { baseDir: BaseDirectory.Home })))
     mkdir(noteSub, { baseDir: BaseDirectory.Home });
 };

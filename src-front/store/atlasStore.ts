@@ -12,11 +12,11 @@ const defaultAtlasState = {
   atlasDirRoot: undefined as string | undefined,
   atlasSubdirNotes: 'notes',
   atlasStoreName: 'atlas-data.json',
-  testValue: 'test',
+  atlasDatabaseName: 'atlas.db',
 };
 
 type AtlasState = typeof defaultAtlasState & {
-  test: (val: string) => void;
+  // test: (val: string) => void;
 };
 
 export const useAtlasStore = create<AtlasState>()(
@@ -26,12 +26,11 @@ export const useAtlasStore = create<AtlasState>()(
       return state?.atlasDirRoot
         ? `${state.atlasDirRoot}${sep()}${state.atlasStoreName}`
         : undefined;
-    })((set) => ({
+    })((_set) => ({
       ...defaultAtlasState,
-      test: (testValue) => {
-        set({ testValue });
-      },
-      // idea: data as map: metadata -> filepath ! content loaded on opening
+      // test: (atlasDatabaseName) => {
+      //   set({ atlasDatabaseName });
+      // },
     })),
   ),
 );

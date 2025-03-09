@@ -1,5 +1,13 @@
 {
-  "cSpell.words": ["fwidth", "smoothstep", "tauri"],
+  "cSpell.words": [
+    "devurl",
+    "fwidth",
+    "knoto",
+    "ndarray",
+    "pyserver",
+    "smoothstep",
+    "tauri"
+  ],
   // GLSL Support
   "[glsl]": {
     "editor.defaultFormatter": "raczzalan.webgl-glsl-editor"

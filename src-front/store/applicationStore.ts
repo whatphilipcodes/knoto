@@ -9,8 +9,8 @@ import { openDir, getAppConfigDir } from '../utils/filesystem';
 import { ApiClient } from '../utils/api';
 
 const defaultApplicationState = {
-  backendPort: undefined as number | undefined,
   backendAPI: undefined as ApiClient | undefined,
+  backendPort: undefined as number | undefined,
   appConfigDir: undefined as string | undefined,
   activeAtlasDir: undefined as string | undefined,
 };

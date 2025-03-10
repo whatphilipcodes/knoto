@@ -12,10 +12,21 @@ export class ApiClient {
     this.url.pathname = `${apiName || 'api'}/${apiVersion || 'v1'}/`;
   }
 
-  async connect(): Promise<string> {
+  async connect(tries: number = 100, delay: number = 100): Promise<boolean> {
     const endpoint = new URL('connect', this.url);
-    const response = await fetch(endpoint);
-    return await response.text();
+    for (let attempt = 1; attempt <= tries; attempt++) {
+      try {
+        const response = await fetch(endpoint);
+        if (response.status === 200) {
+          return true;
+        }
+      } catch (error) {
+        if (attempt < tries) {
+          await new Promise((resolve) => setTimeout(resolve, delay));
+        }
+      }
+    }
+    return false;
   }
 
   async get(endpoint: string): Promise<any> {

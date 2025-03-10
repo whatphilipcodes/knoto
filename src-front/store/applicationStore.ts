@@ -1,9 +1,7 @@
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
-//
 import { invoke } from '@tauri-apps/api/core';
 import { emit } from '@tauri-apps/api/event';
-//
 import { withPersistentStorage } from './middleware/withPersistentStorage';
 import { logger } from './middleware/logger';
 import { openDir, getAppConfigDir } from '../utils/filesystem';
@@ -40,10 +38,15 @@ export const useApplicationStore = create<ApplicationState>()(
         },
         initBackendAPI: async () => {
           const backendPort = await invoke<number>('get_port');
-          set({
-            backendPort,
-            backendAPI: new ApiClient('http', 'localhost', backendPort),
-          });
+          const api = new ApiClient('http', 'localhost', backendPort);
+          if (await api.connect()) {
+            set({
+              backendPort,
+              backendAPI: api,
+            });
+          } else {
+            throw new Error('Could not connect to backendAPI');
+          }
         },
         openAtlasDir: async () => {
           const activeAtlasDir = await openDir();

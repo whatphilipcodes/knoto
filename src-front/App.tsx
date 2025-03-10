@@ -16,9 +16,9 @@ const App = () => {
     const asyncSetup = async () => {
       await application.initAppConfigDir();
       await application.initBackendAPI();
+      // await application.backendAPI?.connect();
       const asyncCleanup: (() => void)[] = [];
       asyncCleanup.push(
-        subscribeColToApp(), // has to run after api init
         await listen('menu:open-atlas', async () => {
           await application.openAtlasDir();
         }),
@@ -29,6 +29,7 @@ const App = () => {
           console.log('atlas:new');
         }),
       );
+      subscribeColToApp(); // has to run after api init
       return asyncCleanup;
     };
     const asyncCleanup = asyncSetup();

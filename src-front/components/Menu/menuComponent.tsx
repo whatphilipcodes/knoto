@@ -38,7 +38,11 @@ const MenuComponent: FC<MenuComponentProps> = () => {
 
   return (
     <div className='relative' ref={menuContainerRef}>
-      <Button variant='secondary' className='h-6 w-6 px-0' onClick={toggleMenu}>
+      <Button
+        variant='secondary'
+        className='h-6 w-6 px-0 dark:bg-transparent dark:hover:bg-neutral-800 dark:active:bg-neutral-600'
+        onClick={toggleMenu}
+      >
         <EllipsisVertical size={14} />
       </Button>
 

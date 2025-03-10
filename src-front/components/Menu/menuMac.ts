@@ -20,7 +20,7 @@ export const createMacMenu = async () => {
     id: 'openAtlas',
     text: 'Open Atlas...',
     accelerator: 'CmdOrCtrl+Alt+O',
-    action: () => emit('menu:open-atlas'),
+    action: async () => await emit('menu:open-atlas'),
   });
   await fileMenu.prepend(openAtlas);
   await menu.insert(fileMenu, 1);

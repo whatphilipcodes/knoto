@@ -4,6 +4,7 @@ import { sep } from '@tauri-apps/api/path';
 //
 import { useAtlasStore } from '../../store/atlasStore';
 import MenuComponent from './menuComponent';
+import MenuStatus from './Status';
 import { createMacMenu } from './menuMac';
 
 interface MenuProps {}
@@ -46,13 +47,19 @@ const Menu: FC<MenuProps> = () => {
     case 'macos':
       return (
         <div className='flex w-full flex-row justify-between text-neutral-500'>
-          <div>{atlasName}</div>
+          <div className='flex w-fit flex-row gap-4'>
+            <div>{atlasName}</div>
+            <MenuStatus />
+          </div>
         </div>
       );
     default:
       return (
         <div className='flex w-full flex-row items-center justify-between text-neutral-500'>
-          <div>{atlasName}</div>
+          <div className='flex w-fit flex-row gap-4'>
+            <div>{atlasName}</div>
+            <MenuStatus />
+          </div>
           <MenuComponent />
         </div>
       );

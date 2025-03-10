@@ -53,7 +53,10 @@ const AtlasRenderer: FC<AtlasRendererProps> = ({
         />
       </Canvas>
       <div className='absolute bottom-0 right-0 p-4'>
-        <Button onClick={() => emit('atlas:new')} className='h-10 w-10 px-0'>
+        <Button
+          onClick={async () => await emit('atlas:new')}
+          className='h-10 w-10 px-0'
+        >
           <Plus size={20} />
         </Button>
       </div>

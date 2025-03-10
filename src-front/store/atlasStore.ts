@@ -2,6 +2,7 @@ import { create } from 'zustand';
 //
 import { BaseDirectory, sep } from '@tauri-apps/api/path';
 import { exists, mkdir } from '@tauri-apps/plugin-fs';
+import { emit } from '@tauri-apps/api/event';
 //
 import { logger } from './middleware/logger';
 import { loadState } from './storeHelpers';
@@ -70,6 +71,10 @@ export const subscribeColToApp = () => {
 
 const initAtlasDir = async (state: AtlasState) => {
   const noteSub = `${state.atlasRootDir}${sep()}${state.atlasSubdirNotes}`;
-  if (!(await exists(noteSub, { baseDir: BaseDirectory.Home })))
-    mkdir(noteSub, { baseDir: BaseDirectory.Home });
+  try {
+    if (!(await exists(noteSub, { baseDir: BaseDirectory.Home })))
+      await mkdir(noteSub, { baseDir: BaseDirectory.Home });
+  } catch (error) {
+    await emit('fs:atlas-error');
+  }
 };

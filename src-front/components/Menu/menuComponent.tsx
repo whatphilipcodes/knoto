@@ -50,8 +50,8 @@ const MenuComponent: FC<MenuComponentProps> = () => {
           <div>
             <button
               className={menuButtonClasses}
-              onClick={() => {
-                emit('menu:open-atlas');
+              onClick={async () => {
+                await emit('menu:open-atlas');
                 setIsMenuOpen(false);
               }}
             >

@@ -64,8 +64,8 @@ const HoverSelect = memo(
       onNodeHover,
     });
 
-    const handleClick = () => {
-      emit('atlas:open', {
+    const handleClick = async () => {
+      await emit('atlas:open', {
         file: hoverIndex ? data[hoverIndex].path : undefined,
       });
     };

@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 //
 import { invoke } from '@tauri-apps/api/core';
+import { emit } from '@tauri-apps/api/event';
 //
 import { withPersistentStorage } from './middleware/withPersistentStorage';
 import { logger } from './middleware/logger';
@@ -48,6 +49,7 @@ export const useApplicationStore = create<ApplicationState>()(
           const activeAtlasDir = await openDir();
           if (activeAtlasDir) {
             set({ activeAtlasDir });
+            await emit('fs:atlas-load');
           }
         },
       })),

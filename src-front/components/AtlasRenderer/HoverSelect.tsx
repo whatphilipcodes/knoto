@@ -29,14 +29,40 @@ const HoverSelect = memo(
     const [isMouseOverCanvas, setIsMouseOverCanvas] = useState(false);
     const { gl } = useThree();
 
+    const { hoverPosition, hoverIndex } = useNodeHover({
+      data,
+      nodeScale,
+      atlasScale,
+      center,
+      onNodeHover,
+    });
+
+    const handleClick = async () => {
+      if (hoverIndex !== null) {
+        await emit('atlas:open', {
+          file: data[hoverIndex].path,
+        });
+      }
+    };
+
+    const { handlers } = useMouseClick(handleClick);
+
     useEffect(() => {
       const canvas = gl.domElement;
 
       const handleMouseEnter = () => setIsMouseOverCanvas(true);
       const handleMouseLeave = () => setIsMouseOverCanvas(false);
 
+      // Attach the mouse click handlers to the canvas
+      const handlePointerDown = (e: any) => handlers.onPointerDown(e);
+      const handlePointerMove = (e: any) => handlers.onPointerMove(e);
+      const handlePointerUp = (e: any) => handlers.onPointerUp(e);
+
       canvas.addEventListener('mouseenter', handleMouseEnter);
       canvas.addEventListener('mouseleave', handleMouseLeave);
+      canvas.addEventListener('pointerdown', handlePointerDown);
+      canvas.addEventListener('pointermove', handlePointerMove);
+      canvas.addEventListener('pointerup', handlePointerUp);
 
       // Initialize state based on whether mouse is already over canvas
       const rect = canvas.getBoundingClientRect();
@@ -53,28 +79,16 @@ const HoverSelect = memo(
       return () => {
         canvas.removeEventListener('mouseenter', handleMouseEnter);
         canvas.removeEventListener('mouseleave', handleMouseLeave);
+        canvas.removeEventListener('pointerdown', handlePointerDown);
+        canvas.removeEventListener('pointermove', handlePointerMove);
+        canvas.removeEventListener('pointerup', handlePointerUp);
       };
-    }, [gl]);
-
-    const { hoverPosition, hoverIndex } = useNodeHover({
-      data,
-      nodeScale,
-      atlasScale,
-      center,
-      onNodeHover,
-    });
-
-    const handleClick = async () => {
-      await emit('atlas:open', {
-        file: hoverIndex ? data[hoverIndex].path : undefined,
-      });
-    };
-    const { handlers } = useMouseClick(handleClick);
+    }, [gl, handlers]);
 
     if (!hoverPosition || !isMouseOverCanvas) return null;
 
     return (
-      <mesh position={hoverPosition} renderOrder={1} {...handlers}>
+      <mesh position={hoverPosition} renderOrder={1}>
         <Triangle size={nodeScale * 1.2} />
         <meshBasicMaterial
           color={hoverColor}

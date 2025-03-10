@@ -1,17 +1,20 @@
+import { useApplicationStore } from '../../store/applicationStore';
+import { useAtlasStore } from '../../store/atlasStore';
+//
 import { type FC, useLayoutEffect, useMemo } from 'react';
 import { platform } from '@tauri-apps/plugin-os';
-import { sep } from '@tauri-apps/api/path';
-//
-import { useAtlasStore } from '../../store/atlasStore';
 import MenuComponent from './menuComponent';
-import MenuStatus from './Status';
+import { sep } from '@tauri-apps/api/path';
 import { createMacMenu } from './menuMac';
+import MenuStatus from './Status';
+import LoadingSpinner from './Spinner';
 
 interface MenuProps {}
 
 const current = platform();
 
 const Menu: FC<MenuProps> = () => {
+  const application = useApplicationStore();
   const atlas = useAtlasStore();
 
   useLayoutEffect(() => {
@@ -43,27 +46,16 @@ const Menu: FC<MenuProps> = () => {
     return parts[parts.length - 1];
   }, [atlas.atlasRootDir]);
 
-  switch (current) {
-    case 'macos':
-      return (
-        <div className='flex w-full flex-row justify-between text-neutral-500'>
-          <div className='flex w-fit flex-row gap-4'>
-            <div>{atlasName}</div>
-            <MenuStatus />
-          </div>
-        </div>
-      );
-    default:
-      return (
-        <div className='flex w-full flex-row items-center justify-between text-neutral-500'>
-          <div className='flex w-fit flex-row gap-4'>
-            <div>{atlasName}</div>
-            <MenuStatus />
-          </div>
-          <MenuComponent />
-        </div>
-      );
-  }
+  return (
+    <div className='flex w-full flex-row items-center justify-between text-neutral-500'>
+      <div className='flex w-fit flex-row items-center gap-4'>
+        <div>{atlasName}</div>
+        {!application.backendAPI || (!atlas.nodes.length && <LoadingSpinner />)}
+        <MenuStatus />
+      </div>
+      {current !== 'macos' && <MenuComponent />}
+    </div>
+  );
 };
 
 export default Menu;

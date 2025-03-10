@@ -20,7 +20,7 @@ const defaultAtlasState = {
 };
 
 type AtlasState = typeof defaultAtlasState & {
-  setFullState: (newState: Omit<AtlasState, 'setFullState'>) => void;
+  setFullState: (newState: AtlasState) => void;
   updateBackend: () => Promise<void>;
   updateNodes: () => Promise<void>;
 };
@@ -102,6 +102,12 @@ const updateAtlasStore = async (newRoot: string): Promise<AtlasState> => {
     `${merged.atlasRootDir}${sep()}${merged.atlasStoreName}`,
     BaseDirectory.Home,
     merged,
-  ).then((newState) => useAtlasStore.getState().setFullState(newState));
+  ).then((newState) => {
+    const clearNodes: AtlasState = {
+      ...newState,
+      nodes: [] as Node[],
+    };
+    useAtlasStore.setState(clearNodes);
+  });
   return useAtlasStore.getState();
 };

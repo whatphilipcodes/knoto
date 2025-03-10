@@ -12,7 +12,7 @@ export class ApiClient {
     this.url.pathname = `${apiName || 'api'}/${apiVersion || 'v1'}/`;
   }
 
-  async connect(tries: number = 100, delay: number = 100): Promise<boolean> {
+  async connect(tries: number = 1000, delay: number = 500): Promise<boolean> {
     const endpoint = new URL('connect', this.url);
     for (let attempt = 1; attempt <= tries; attempt++) {
       try {

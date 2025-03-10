@@ -18,6 +18,7 @@ const App = () => {
       await application.initBackendAPI();
       const asyncCleanup: (() => void)[] = [];
       asyncCleanup.push(
+        subscribeColToApp(), // has to run after api init
         await listen('menu:open-atlas', async () => {
           await application.openAtlasDir();
         }),
@@ -31,9 +32,7 @@ const App = () => {
       return asyncCleanup;
     };
     const asyncCleanup = asyncSetup();
-    const clearColSubToApp = subscribeColToApp();
     return () => {
-      clearColSubToApp();
       asyncCleanup.then((cfa) => cfa.forEach((f) => f()));
     };
   }, []);

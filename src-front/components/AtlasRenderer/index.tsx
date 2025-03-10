@@ -6,34 +6,40 @@ import Nodes from './Nodes';
 import Button from '../Primitives/Button';
 import { Plus } from 'lucide-react';
 import { emit } from '@tauri-apps/api/event';
+import { useAtlasStore } from '../../store/atlasStore';
 
 interface AtlasRendererProps {
-  _testCount?: number;
   atlasScale?: number;
   nodeScale?: number;
 }
 
 const AtlasRenderer: FC<AtlasRendererProps> = ({
-  _testCount = 1000000,
   atlasScale = 1000,
   nodeScale = 0.2,
 }) => {
+  const atlas = useAtlasStore();
+
   const testColors: Color[] = [];
   testColors.push(new Color(0x8387f1));
   testColors.push(new Color(0x545ac1));
   testColors.push(new Color(0x2e3064));
 
   const data = useMemo(() => {
-    const nodes = [];
-    for (let i = 0; i < _testCount; i++) {
-      nodes.push({
-        path: 'path/to/file_' + i,
-        pos: new Vector2(Math.random(), Math.random()),
-        col: testColors[i % testColors.length],
-      });
+    const nodes = atlas.nodes;
+    if (!nodes) {
+      return [];
     }
-    return nodes;
-  }, []);
+    const filtered = nodes.map((node) => {
+      const randomColor =
+        testColors[Math.floor(Math.random() * testColors.length)];
+      return {
+        path: node.filepath,
+        pos: new Vector2(node.coordinates.x, node.coordinates.y),
+        col: randomColor,
+      };
+    });
+    return filtered;
+  }, [atlas.nodes]);
 
   // split-view: emit blur event
   const focusAtlas = () => {

@@ -59,10 +59,13 @@ async def set_atlas(atlas_data: AtlasData):
     return {"message": f"new atlas root dir set: {Store.atlas_root}"}
 
 
-@app.post("/api/v1/add-node")
-async def add_node(node: Node):
-    Store.insert_node(node)
-    return {"message": f"node added to {Store.db_path}: {node.filepath}"}
+@app.post("/api/v1/add-nodes")
+async def add_nodes(nodes: list[Node] | Node):
+    Store.insert_nodes(nodes)
+    if isinstance(nodes, list):
+        return {"message": f"{len(nodes)} nodes added to {Store.db_path}"}
+    else:
+        return {"message": f"node added to {Store.db_path}: {nodes.filepath}"}
 
 
 @app.delete("/api/v1/nodes/{filepath:path}")

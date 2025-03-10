@@ -43,18 +43,23 @@ class AtlasDB:
         self.connection = self._connect()
         self._ensure_nodes()
 
-    def insert_node(self, node: Node):
+    def insert_nodes(self, nodes):
+        if not isinstance(nodes, list):
+            nodes = [nodes]
+
         query = """
         INSERT INTO nodes (filepath, x, y, created)
         VALUES (?, ?, ?, ?)
         """
-        params = (
-            node.filepath,
-            node.coordinates.x,
-            node.coordinates.y,
-            node.created.isoformat(),
-        )
-        self.execute(query, params)
+
+        for node in nodes:
+            params = (
+                node.filepath,
+                node.coordinates.x,
+                node.coordinates.y,
+                node.created.isoformat(),
+            )
+            self.execute(query, params)
 
     def get_all_nodes(self):
         query = "SELECT filepath, x, y, created FROM nodes"

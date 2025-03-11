@@ -10,9 +10,14 @@ import { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 interface AtlasControlsProps {
   bounds: Vector2Like;
   maxZoom?: number;
+  initialZoom?: number;
 }
 
-const AtlasControls: FC<AtlasControlsProps> = ({ bounds, maxZoom = 100 }) => {
+const AtlasControls: FC<AtlasControlsProps> = ({
+  bounds,
+  maxZoom = 100,
+  initialZoom = 20,
+}) => {
   const ref = useRef<OrbitControlsImpl>(null!);
   const { camera, size } = useThree();
   const orthoCam = camera as ThreeOrthographicCamera;
@@ -56,16 +61,7 @@ const AtlasControls: FC<AtlasControlsProps> = ({ bounds, maxZoom = 100 }) => {
 
   // Set initial zoom and handle resizes
   useEffect(() => {
-    // Calculate dynamic zoom range
-    const dynamicMinZoom = calculateOptimalZoom();
-    const dynamicMaxZoom = dynamicMinZoom * 10;
-
-    // Set initial zoom to middle of the range
-    const initialZoom = (dynamicMinZoom + dynamicMaxZoom) / 2;
-    orthoCam.zoom = initialZoom;
-    orthoCam.updateProjectionMatrix();
-
-    // Apply constraints immediately
+    // Removed forced middle zoom
     handleChange();
 
     // Handler for window resize
@@ -87,7 +83,6 @@ const AtlasControls: FC<AtlasControlsProps> = ({ bounds, maxZoom = 100 }) => {
   }, [bounds, size.width, size.height]);
 
   const dynamicMinZoom = calculateOptimalZoom();
-  const initialZoom = (dynamicMinZoom + maxZoom) / 2;
 
   return (
     <>

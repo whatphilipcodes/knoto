@@ -1,11 +1,14 @@
 import { type FC, useRef, useEffect } from 'react';
 import { useThree } from '@react-three/fiber';
 import { MapControls, OrthographicCamera } from '@react-three/drei';
-import { Vector2, OrthographicCamera as ThreeOrthographicCamera } from 'three';
+import {
+  Vector2Like,
+  OrthographicCamera as ThreeOrthographicCamera,
+} from 'three';
 import { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 
 interface AtlasControlsProps {
-  bounds: Vector2;
+  bounds: Vector2Like;
   maxZoom?: number;
 }
 

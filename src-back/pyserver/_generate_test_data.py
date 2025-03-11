@@ -4,7 +4,7 @@ import random
 from datetime import datetime
 
 
-class AtlasDB:
+class TestDataDB:
     def __init__(self, db_path: str):
         self.db_path = db_path
         self.connection = self._connect()
@@ -16,7 +16,9 @@ class AtlasDB:
             filepath TEXT PRIMARY KEY,
             x REAL NOT NULL,
             y REAL NOT NULL,
-            created TEXT NOT NULL
+            cdt TEXT NOT NULL,
+            mdt TEXT NOT NULL,
+            col TEXT NOT NULL
         )
         """
         self.execute(query)
@@ -39,15 +41,19 @@ class AtlasDB:
         self.connection.close()
 
     def insert_random_node(self, filepath: str):
+        now_str = datetime.now().isoformat()
+        random_color = random.choice(["#8387f1", "#545ac1", "#2e3064"])
         query = """
-        INSERT INTO nodes (filepath, x, y, created)
-        VALUES (?, ?, ?, ?)
+        INSERT INTO nodes (filepath, x, y, cdt, mdt, col)
+        VALUES (?, ?, ?, ?, ?, ?)
         """
         params = (
             filepath,
             random.uniform(0, 1),
             random.uniform(0, 1),
-            datetime.now().isoformat(),
+            now_str,
+            now_str,
+            random_color,
         )
         self.execute(query, params)
 
@@ -60,7 +66,7 @@ def main():
     db_path = sys.argv[1]
     number_of_nodes = int(sys.argv[2])
 
-    db = AtlasDB(db_path)
+    db = TestDataDB(db_path)
 
     for i in range(number_of_nodes):
         filepath = f"path/to/node_{i}.md"

@@ -1,5 +1,4 @@
 from pydantic import BaseModel
-from datetime import datetime
 
 
 class AtlasData(BaseModel):
@@ -12,7 +11,9 @@ class Coordinates(BaseModel):
     y: float
 
 
-class Node(BaseModel):
+class NodeData(BaseModel):
     filepath: str
-    coordinates: Coordinates
-    created: datetime
+    pos: Coordinates
+    cdt: str
+    mdt: str
+    col: str

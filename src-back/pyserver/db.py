@@ -1,4 +1,4 @@
-from utils import Node, Coordinates
+from utils import NodeData, Coordinates
 from datetime import datetime
 import sqlite3
 
@@ -15,7 +15,9 @@ class AtlasDB:
             filepath TEXT PRIMARY KEY,
             x REAL NOT NULL,
             y REAL NOT NULL,
-            created TEXT NOT NULL
+            cdt TEXT NOT NULL,
+            mdt TEXT NOT NULL,
+            col TEXT NOT NULL
         )
         """
         self.execute(query)
@@ -43,35 +45,36 @@ class AtlasDB:
         self.connection = self._connect()
         self._ensure_nodes()
 
-    def insert_nodes(self, nodes):
-        if not isinstance(nodes, list):
+    def insert_nodes(self, nodes: NodeData | list[NodeData]):
+        if not isinstance(nodes, list[NodeData]):
             nodes = [nodes]
 
         query = """
-        INSERT INTO nodes (filepath, x, y, created)
-        VALUES (?, ?, ?, ?)
+        INSERT INTO nodes (filepath, x, y, cdt, mdt, col)
+        VALUES (?, ?, ?, ?, ?, ?)
         """
 
         for node in nodes:
             params = (
                 node.filepath,
-                node.coordinates.x,
-                node.coordinates.y,
-                node.created.isoformat(),
+                node.pos.x,
+                node.pos.y,
+                node.cdt,
+                node.mdt,
+                node.col,
             )
             self.execute(query, params)
 
+    # to-do: chunked stream apporach
     def get_all_nodes(self):
-        query = "SELECT filepath, x, y, created FROM nodes"
+        query = "SELECT filepath, x, y, cdt, mdt, col FROM nodes"
         cursor = self.execute(query)
-        nodes = []
+        nodes: list[NodeData] = []
 
         for row in cursor.fetchall():
-            filepath, x, y, created = row
-            node = Node(
-                filepath=filepath,
-                coordinates=Coordinates(x=x, y=y),
-                created=datetime.fromisoformat(created),
+            filepath, x, y, cdt, mdt, col = row
+            node = NodeData(
+                filepath=filepath, pos=Coordinates(x=x, y=y), cdt=cdt, mdt=mdt, col=col
             )
             nodes.append(node)
 

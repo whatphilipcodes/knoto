@@ -2,13 +2,10 @@ import { Vector2, Color, InstancedMesh, Object3D, Euler } from 'three';
 import { type FC, useRef, useLayoutEffect, useMemo, useEffect } from 'react';
 import HoverSelect from './HoverSelect';
 import Triangle from './Triangle';
+import { NodeData } from '../../utils/types';
 
 interface NodesProps {
-  data: {
-    pos: Vector2;
-    col: Color;
-    path: string;
-  }[];
+  data: NodeData[];
   nodeScale?: number;
   atlasScale?: number;
   onNodeHover?: (nodeId: string | number | null, index: number | null) => void;
@@ -17,7 +14,7 @@ interface NodesProps {
 }
 
 const Nodes: FC<NodesProps> = ({
-  data,
+  data = [],
   nodeScale = 0.1,
   atlasScale = 1000,
   onNodeHover,
@@ -47,7 +44,9 @@ const Nodes: FC<NodesProps> = ({
 
   // Process colors
   const colors = useMemo(() => {
-    return new Float32Array(data.map(({ col }) => col.toArray()).flat());
+    return new Float32Array(
+      data.map(({ col }) => new Color(col).toArray()).flat(),
+    );
   }, [data]);
 
   // Set up instance matrices efficiently

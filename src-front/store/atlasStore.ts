@@ -9,14 +9,14 @@ import { loadState } from './storeHelpers';
 import { withPersistentStorage } from './middleware/withPersistentStorage';
 import { useApplicationStore } from './applicationStore';
 import { AtlasData } from '../utils/types';
-import { Node } from '../utils/types';
+import { NodeData } from '../utils/types';
 
 const defaultAtlasState = {
-  atlasRootDir: undefined as string | undefined,
+  atlasRootDir: null as string | null,
   atlasSubdirNotes: 'notes',
   atlasStoreName: 'atlas-config.json',
   atlasDatabaseName: 'atlas.db',
-  nodes: [] as Node[],
+  nodes: null as NodeData[] | null,
 };
 
 type AtlasState = typeof defaultAtlasState & {
@@ -59,7 +59,7 @@ export const useAtlasStore = create<AtlasState>()(
       updateNodes: async () => {
         const api = useApplicationStore.getState().backendAPI;
         await api?.get('/api/v1/get-all-nodes').then((data) => {
-          const nodes: Node[] = data.nodes;
+          const nodes: NodeData[] = data.nodes;
           set({ nodes });
         });
       },
@@ -105,7 +105,7 @@ const updateAtlasStore = async (newRoot: string): Promise<AtlasState> => {
   ).then((newState) => {
     const clearNodes: AtlasState = {
       ...newState,
-      nodes: [] as Node[],
+      nodes: null,
     };
     useAtlasStore.setState(clearNodes);
   });

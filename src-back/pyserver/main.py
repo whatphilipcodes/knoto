@@ -4,7 +4,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 from store import Store
-from utils import AtlasData, Node
+from utils import AtlasData, NodeData
 from cli import parse_arguments
 
 
@@ -60,7 +60,7 @@ async def set_atlas(atlas_data: AtlasData):
 
 
 @app.post("/api/v1/add-nodes")
-async def add_nodes(nodes: list[Node] | Node):
+async def add_nodes(nodes: list[NodeData] | NodeData):
     Store.insert_nodes(nodes)
     if isinstance(nodes, list):
         return {"message": f"{len(nodes)} nodes added to {Store.db_path}"}

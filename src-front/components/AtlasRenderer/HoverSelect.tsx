@@ -2,11 +2,10 @@ import { memo, useEffect, useState } from 'react';
 import { Vector2, Color } from 'three';
 import { useThree } from '@react-three/fiber';
 import Triangle from './Triangle';
-//
 import { emit } from '@tauri-apps/api/event';
-//
-import { useNodeHover, NodeData } from './useNodeHover';
+import { useNodeHover } from './useNodeHover';
 import { useMouseClick } from './useMouseClick';
+import { NodeData } from '../../utils/types';
 
 interface HoverSelectProps {
   data: NodeData[];
@@ -40,7 +39,7 @@ const HoverSelect = memo(
     const handleClick = async () => {
       if (hoverIndex !== null) {
         await emit('atlas:open', {
-          file: data[hoverIndex].path,
+          node: data[hoverIndex],
         });
       }
     };

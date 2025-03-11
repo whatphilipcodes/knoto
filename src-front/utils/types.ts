@@ -3,8 +3,13 @@ export interface AtlasData {
   id_database: string;
 }
 
-export interface Node {
+export interface NodeData {
   filepath: string;
-  coordinates: { x: number; y: number };
-  created: string;
+  pos: {
+    x: number;
+    y: number;
+  };
+  cdt: string;
+  mdt: string;
+  col: string;
 }

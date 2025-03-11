@@ -1,12 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Vector2, Vector3 } from 'three';
 import { useFrame, useThree } from '@react-three/fiber';
-
-export interface NodeData {
-  pos: Vector2;
-  path: string;
-  [key: string]: any;
-}
+import { NodeData } from '../../utils/types';
 
 export function useNodeHover({
   data,
@@ -190,13 +185,13 @@ export function useNodeHover({
         setHoverPosition(worldPos);
 
         if (onNodeHover)
-          onNodeHover(data[closestIdx].path ?? closestIdx, closestIdx);
+          onNodeHover(data[closestIdx].filepath ?? closestIdx, closestIdx);
 
         if (debug) {
           console.log('Node found:', {
-            id: data[closestIdx].path ?? closestIdx,
+            id: data[closestIdx].filepath ?? closestIdx,
             index: closestIdx,
-            position: data[closestIdx].pos.toArray(),
+            position: [data[closestIdx].pos.x, data[closestIdx].pos.y],
             distance: Math.sqrt(closestDistSq),
           });
         }

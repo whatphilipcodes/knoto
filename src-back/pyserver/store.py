@@ -1,5 +1,5 @@
 from typing import ClassVar, Optional
-from utils import Node
+from utils import NodeData
 from db import AtlasDB
 import os
 
@@ -22,15 +22,15 @@ class Store:
             cls.db.change_db(cls.db_path)
 
     @classmethod
-    def insert_node(cls, node: Node) -> None:
-        cls.db.insert_node(node)
+    def insert_nodes(cls, nodes: NodeData | list[NodeData]) -> None:
+        cls.db.insert_nodes(nodes)
 
     @classmethod
     def delete_node(cls, filepath: str) -> None:
         cls.db.delete_node(filepath)
 
     @classmethod
-    def get_all_nodes(cls) -> list[Node]:
+    def get_all_nodes(cls) -> list[NodeData]:
         if not cls.db:
             return []
         return cls.db.get_all_nodes()

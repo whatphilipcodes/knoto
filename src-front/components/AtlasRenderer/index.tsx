@@ -1,5 +1,4 @@
-import { FC, useMemo } from 'react';
-import { Color, Vector2 } from 'three';
+import { FC } from 'react';
 import { Canvas } from '@react-three/fiber';
 import AtlasControls from './AtlasControls';
 import Nodes from './Nodes';
@@ -19,28 +18,6 @@ const AtlasRenderer: FC<AtlasRendererProps> = ({
 }) => {
   const atlas = useAtlasStore();
 
-  const testColors: Color[] = [];
-  testColors.push(new Color(0x8387f1));
-  testColors.push(new Color(0x545ac1));
-  testColors.push(new Color(0x2e3064));
-
-  const data = useMemo(() => {
-    const nodes = atlas.nodes;
-    if (!nodes) {
-      return [];
-    }
-    const filtered = nodes.map((node) => {
-      const randomColor =
-        testColors[Math.floor(Math.random() * testColors.length)];
-      return {
-        path: node.filepath,
-        pos: new Vector2(node.coordinates.x, node.coordinates.y),
-        col: randomColor,
-      };
-    });
-    return filtered;
-  }, [atlas.nodes]);
-
   // split-view: emit blur event
   const focusAtlas = () => {
     document.dispatchEvent(new CustomEvent('blur:text-editor'));
@@ -53,9 +30,13 @@ const AtlasRenderer: FC<AtlasRendererProps> = ({
       onMouseDown={focusAtlas}
     >
       <Canvas className='rounded-md' flat>
-        <Nodes data={data} nodeScale={nodeScale} atlasScale={atlasScale} />
+        <Nodes
+          data={atlas.nodes ?? []}
+          nodeScale={nodeScale}
+          atlasScale={atlasScale}
+        />
         <AtlasControls
-          bounds={new Vector2(atlasScale * 0.5 + 4, atlasScale * 0.5 + 4)}
+          bounds={{ x: atlasScale * 0.5 + 4, y: atlasScale * 0.5 + 4 }}
         />
       </Canvas>
       <div className='absolute bottom-0 right-0 p-4'>

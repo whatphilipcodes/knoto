@@ -50,7 +50,7 @@ const Menu: FC<MenuProps> = () => {
     <div className='flex w-full flex-row items-center justify-between text-neutral-500'>
       <div className='flex w-fit flex-row items-center gap-4'>
         <div>{atlasName}</div>
-        {!application.backendAPI || (!atlas.nodes.length && <LoadingSpinner />)}
+        {!application.backendAPI || (!atlas.nodes && <LoadingSpinner />)}
         <MenuStatus />
       </div>
       {current !== 'macos' && <MenuComponent />}

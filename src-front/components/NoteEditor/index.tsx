@@ -1,6 +1,13 @@
-import { type FC, useRef } from 'react';
-import { LexicalEditor } from 'lexical';
+import { type FC, useRef, useEffect, useMemo } from 'react';
+import {
+  readTextFile,
+  writeTextFile,
+  BaseDirectory,
+} from '@tauri-apps/plugin-fs';
+import { sep } from '@tauri-apps/api/path';
+import { listen } from '@tauri-apps/api/event';
 
+import { $getRoot, LexicalEditor } from 'lexical';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
@@ -30,13 +37,10 @@ import { CodeHighlightNode, CodeNode } from '@lexical/code';
 // custom
 import GracefulBlur from './plugins/GracefulBlur';
 import theme from './theme';
+import { useAtlasStore } from '../../store/atlasStore';
 
 const onError = (error: Error) => {
   console.error(error);
-};
-
-const onChange = (change: any) => {
-  console.log(change);
 };
 
 const Placeholder = () => {
@@ -47,9 +51,17 @@ const Placeholder = () => {
   );
 };
 
-interface NoteEditorProps {}
+interface NoteEditorProps {
+  filePath?: string;
+  baseDir?: BaseDirectory;
+}
 
-const NoteEditor: FC<NoteEditorProps> = () => {
+const NoteEditor: FC<NoteEditorProps> = ({
+  filePath = 'test.md',
+  baseDir = BaseDirectory.Home,
+}) => {
+  const atlas = useAtlasStore();
+  const editor = useRef<LexicalEditor>(null!);
   const initialConfig = {
     namespace: 'text-editor',
     theme,
@@ -66,12 +78,57 @@ const NoteEditor: FC<NoteEditorProps> = () => {
     onError,
   };
 
-  const editorRef = useRef<LexicalEditor>(null!);
+  const full_filePath = useMemo(() => {
+    return (
+      atlas.atlasRootDir + sep() + atlas.atlasSubdirNotes + sep() + filePath
+    );
+  }, [atlas.atlasRootDir]);
+
+  useEffect(() => {
+    if (!editor.current) return;
+    async function loadContent() {
+      const mdContent = await readTextFile(full_filePath, { baseDir });
+      editor.current.update(() => {
+        $convertFromMarkdownString(mdContent, TRANSFORMERS);
+      });
+    }
+    loadContent();
+  }, [full_filePath]);
+
+  let saveTimer: ReturnType<typeof setTimeout> | null = null;
+
+  const onChange = () => {
+    if (saveTimer) clearTimeout(saveTimer);
+    saveTimer = setTimeout(async () => {
+      editor.current.update(() => {
+        const updatedMd = $convertToMarkdownString(TRANSFORMERS);
+        writeTextFile(full_filePath, updatedMd, { baseDir });
+      });
+    }, 500);
+  };
+
+  useEffect(() => {
+    const asyncSetup = async () => {
+      const asyncCleanup: (() => void)[] = [];
+      asyncCleanup.push(await listen('fs:atlas-load', clearEditor));
+      return asyncCleanup;
+    };
+    const asyncCleanup = asyncSetup();
+    return () => {
+      asyncCleanup.then((cfa) => cfa.forEach((f) => f()));
+    };
+  }, []);
+
+  const clearEditor = () => {
+    editor.current.update(() => {
+      $getRoot().clear();
+    });
+  };
 
   return (
     <div data-info='editor-wrapper' className='relative h-full w-full'>
       <LexicalComposer initialConfig={initialConfig}>
-        <EditorRefPlugin editorRef={editorRef} />
+        <EditorRefPlugin editorRef={editor} />
         <RichTextPlugin
           contentEditable={<ContentEditable />}
           placeholder={<Placeholder />}

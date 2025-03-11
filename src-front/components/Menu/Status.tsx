@@ -10,11 +10,9 @@ const MenuStatus: FC<MenuStatusProps> = () => {
       const asyncCleanup: (() => void)[] = [];
       asyncCleanup.push(
         await listen('fs:atlas-load', () => {
-          console.log('fs:atlas-load');
           setError(false);
         }),
         await listen('fs:atlas-error', () => {
-          console.log('fs:atlas-error');
           setError(true);
         }),
       );

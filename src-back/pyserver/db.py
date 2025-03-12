@@ -1,5 +1,4 @@
 from utils import NodeData, Coordinates
-from datetime import datetime
 import sqlite3
 
 
@@ -45,25 +44,20 @@ class AtlasDB:
         self.connection = self._connect()
         self._ensure_nodes()
 
-    def insert_nodes(self, nodes: NodeData | list[NodeData]):
-        if not isinstance(nodes, list[NodeData]):
-            nodes = [nodes]
-
+    def insert_node(self, node: NodeData):
         query = """
         INSERT INTO nodes (filepath, x, y, cdt, mdt, col)
         VALUES (?, ?, ?, ?, ?, ?)
         """
-
-        for node in nodes:
-            params = (
-                node.filepath,
-                node.pos.x,
-                node.pos.y,
-                node.cdt,
-                node.mdt,
-                node.col,
-            )
-            self.execute(query, params)
+        params = (
+            node.filepath,
+            node.pos.x,
+            node.pos.y,
+            node.cdt,
+            node.mdt,
+            node.col,
+        )
+        self.execute(query, params)
 
     # to-do: chunked stream apporach
     def get_all_nodes(self):

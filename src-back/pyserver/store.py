@@ -1,12 +1,14 @@
 from typing import ClassVar, Optional
 from utils import NodeData
 from db import AtlasDB
+from model import Model
 import os
 
 
 class Store:
     atlas_root: ClassVar[Optional[str]] = None
     db_path: ClassVar[Optional[str]] = None
+    model: ClassVar[Optional[Model]] = None
     db: ClassVar[Optional[AtlasDB]] = None
 
     def __new__(cls):
@@ -22,8 +24,12 @@ class Store:
             cls.db.change_db(cls.db_path)
 
     @classmethod
-    def insert_nodes(cls, nodes: NodeData | list[NodeData]) -> None:
-        cls.db.insert_nodes(nodes)
+    def insert_nodes(cls, nodes: NodeData | list[NodeData]) -> list[NodeData]:
+        if not isinstance(nodes, list[NodeData]):
+            nodes = [nodes]
+
+        results = map(cls.model.infer, nodes)
+        return list(map(cls.db.insert_node, results))
 
     @classmethod
     def delete_node(cls, filepath: str) -> None:

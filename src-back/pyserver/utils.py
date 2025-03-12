@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import Optional
 
 
 class AtlasData(BaseModel):
@@ -13,7 +14,7 @@ class Coordinates(BaseModel):
 
 class NodeData(BaseModel):
     filepath: str
-    pos: Coordinates
+    pos: Optional[Coordinates]
     cdt: str
     mdt: str
     col: str

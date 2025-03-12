@@ -61,11 +61,8 @@ async def set_atlas(atlas_data: AtlasData):
 
 @app.post("/api/v1/add-nodes")
 async def add_nodes(nodes: list[NodeData] | NodeData):
-    Store.insert_nodes(nodes)
-    if isinstance(nodes, list):
-        return {"message": f"{len(nodes)} nodes added to {Store.db_path}"}
-    else:
-        return {"message": f"node added to {Store.db_path}: {nodes.filepath}"}
+    results = Store.insert_nodes(nodes)
+    return {"nodes": results}
 
 
 @app.delete("/api/v1/nodes/{filepath:path}")

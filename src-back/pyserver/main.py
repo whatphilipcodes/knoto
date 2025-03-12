@@ -65,6 +65,12 @@ async def add_nodes(nodes: list[NodeData] | NodeData):
     return {"nodes": results}
 
 
+@app.post("/api/v1/update-node")
+async def update_node(node: NodeData):
+    new = Store.update_node(node)
+    return {"new": new}
+
+
 @app.delete("/api/v1/nodes/{filepath:path}")
 async def delete_node(filepath: str):
     Store.delete_node(filepath)

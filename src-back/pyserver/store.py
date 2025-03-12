@@ -32,6 +32,12 @@ class Store:
         return list(map(cls.db.insert_node, results))
 
     @classmethod
+    def update_node(cls, node: NodeData) -> NodeData:
+        result = cls.model.infer(node)
+        cls.db.update_node(result)
+        return result
+
+    @classmethod
     def delete_node(cls, filepath: str) -> None:
         cls.db.delete_node(filepath)
 

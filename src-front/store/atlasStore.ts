@@ -1,9 +1,7 @@
 import { create } from 'zustand';
-//
 import { BaseDirectory, sep } from '@tauri-apps/api/path';
 import { exists, mkdir } from '@tauri-apps/plugin-fs';
 import { emit } from '@tauri-apps/api/event';
-//
 import { logger } from './middleware/logger';
 import { loadState } from './storeHelpers';
 import { withPersistentStorage } from './middleware/withPersistentStorage';
@@ -23,7 +21,8 @@ const defaultAtlasState = {
 type AtlasState = typeof defaultAtlasState & {
   setFullState: (newState: AtlasState) => void;
   updateBackend: () => Promise<void>;
-  updateNodes: () => Promise<void>;
+  updateNode: (node: NodeData) => Promise<void>;
+  getAllNodes: () => Promise<void>;
   setActiveNode: (activeNode: NodeData) => void;
 };
 
@@ -59,7 +58,23 @@ export const useAtlasStore = create<AtlasState>()(
         };
         await api?.post('/api/v1/set-atlas', data);
       },
-      updateNodes: async () => {
+      updateNode: async (node: NodeData) => {
+        const api = useApplicationStore.getState().backendAPI;
+        api
+          ?.post('/api/v1/update-node', node)
+          .then((data: { new: NodeData }) => {
+            let nodes = get().nodes;
+            if (!nodes)
+              throw new Error(
+                'tried to update nodes even though no nodes are loaded in',
+              );
+            nodes = nodes.map((node) =>
+              node.filepath === data.new.filepath ? data.new : node,
+            );
+            set({ nodes });
+          });
+      },
+      getAllNodes: async () => {
         const api = useApplicationStore.getState().backendAPI;
         await api?.get('/api/v1/get-all-nodes').then((data) => {
           const nodes: NodeData[] = data.nodes;
@@ -82,7 +97,7 @@ export const subscribeColToApp = () => {
       if (!newRoot) return;
       const newAtlas = await updateAtlasStore(newRoot);
       await newAtlas.updateBackend();
-      await newAtlas.updateNodes();
+      await newAtlas.getAllNodes();
     },
     { fireImmediately: true },
   );

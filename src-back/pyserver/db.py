@@ -59,6 +59,15 @@ class AtlasDB:
         )
         self.execute(query, params)
 
+    def update_node(self, node: NodeData):
+        query = """
+        UPDATE nodes
+        SET x = ?, y = ?, cdt = ?, mdt = ?, col = ?
+        WHERE filepath = ?
+        """
+        params = (node.pos.x, node.pos.y, node.cdt, node.mdt, node.col, node.filepath)
+        self.execute(query, params)
+
     # to-do: chunked stream apporach
     def get_all_nodes(self):
         query = "SELECT filepath, x, y, cdt, mdt, col FROM nodes"

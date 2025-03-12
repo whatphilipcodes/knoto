@@ -41,6 +41,7 @@ export const useAtlasStore = create<AtlasState>()(
         'atlasSubdirNotes',
         'atlasStoreName',
         'atlasDatabaseName',
+        'activeNode',
       ],
     )((set, get) => ({
       ...defaultAtlasState,

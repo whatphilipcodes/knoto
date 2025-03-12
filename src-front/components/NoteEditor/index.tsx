@@ -1,4 +1,6 @@
 import { type FC, useRef, useEffect, useMemo } from 'react';
+import { useDebouncedCallback } from 'use-debounce';
+import { CornerDownLeft } from 'lucide-react';
 import {
   readTextFile,
   writeTextFile,
@@ -35,6 +37,7 @@ import { ListItemNode, ListNode } from '@lexical/list';
 import { CodeHighlightNode, CodeNode } from '@lexical/code';
 
 // custom
+import FileNamePlugin from './plugins/FileName';
 import GracefulBlur from './plugins/GracefulBlur';
 import theme from './theme';
 import { useAtlasStore } from '../../store/atlasStore';
@@ -45,8 +48,12 @@ const onError = (error: Error) => {
 
 const Placeholder = () => {
   return (
-    <div className='pointer-events-none absolute left-[1.125rem] top-[1.125rem] opacity-50'>
-      Write something nice...
+    <div className='pointer-events-none absolute left-4 top-6 flex flex-row items-center gap-4 opacity-50'>
+      <div>filename</div>
+      <div>+</div>
+      <div className='flex h-4 items-center rounded-sm border p-2'>
+        <CornerDownLeft size={12} />
+      </div>
     </div>
   );
 };
@@ -100,22 +107,23 @@ const NoteEditor: FC<NoteEditorProps> = ({ baseDir = BaseDirectory.Home }) => {
     loadContent();
   }, [filePath]);
 
-  let saveTimer: ReturnType<typeof setTimeout> | null = null;
+  const saveContent = useDebouncedCallback(async () => {
+    if (!filePath) return;
+
+    editor.current.update(() => {
+      const data = $convertToMarkdownString(TRANSFORMERS);
+      writeTextFile(filePath, data, { baseDir });
+    });
+  }, 500);
 
   const onChange = () => {
-    if (saveTimer) clearTimeout(saveTimer);
-    saveTimer = setTimeout(async () => {
-      if (!filePath) return;
-      editor.current.update(() => {
-        const data = $convertToMarkdownString(TRANSFORMERS);
-        writeTextFile(filePath, data, { baseDir });
-      });
-    }, 500);
+    saveContent();
   };
 
   useEffect(() => {
     const asyncSetup = async () => {
       const asyncCleanup: (() => void)[] = [];
+      asyncCleanup.push(await listen('atlas:new', newNote));
       asyncCleanup.push(await listen('fs:atlas-load', clearEditor));
       return asyncCleanup;
     };
@@ -131,10 +139,19 @@ const NoteEditor: FC<NoteEditorProps> = ({ baseDir = BaseDirectory.Home }) => {
     });
   };
 
+  const newNote = () => {
+    console.log('new note');
+  };
+
   return (
     <div data-info='editor-wrapper' className='relative h-full w-full'>
       <LexicalComposer initialConfig={initialConfig}>
         <EditorRefPlugin editorRef={editor} />
+        <FileNamePlugin
+          onFilenameChange={(name) => {
+            console.log('filename: ', name);
+          }}
+        />
         <RichTextPlugin
           contentEditable={<ContentEditable />}
           placeholder={<Placeholder />}

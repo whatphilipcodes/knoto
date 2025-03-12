@@ -53,7 +53,8 @@ const Menu: FC<MenuProps> = () => {
         {(!application.backendAPI || !atlas.nodes) && <LoadingSpinner />}
         <MenuStatus />
       </div>
-      {current !== 'macos' && <MenuComponent />}
+      {/* {current !== 'macos' && <MenuComponent />} */}
+      <MenuComponent />
     </div>
   );
 };

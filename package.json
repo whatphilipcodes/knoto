@@ -41,6 +41,7 @@
     "react-dom": "^19.0.0",
     "three": "^0.174.0",
     "three-stdlib": "^2.35.14",
+    "use-debounce": "^10.0.4",
     "zustand": "^5.0.3"
   },
   "devDependencies": {

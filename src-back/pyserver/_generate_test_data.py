@@ -1,14 +1,24 @@
 import sys
 import sqlite3
 import random
+import os
+from os import sep
 from datetime import datetime
 
 
 class TestDataDB:
-    def __init__(self, db_path: str):
-        self.db_path = db_path
+    def __init__(self, atlas_path: str):
+        self.atlas_path = atlas_path
+        self.db_path = atlas_path + sep + "atlas.db"
+        self.notes_path = atlas_path + sep + "notes"
         self.connection = self._connect()
         self._ensure_nodes()
+        self._ensure_notes_directory()
+
+    def _ensure_notes_directory(self):
+        if not os.path.exists(self.notes_path):
+            os.makedirs(self.notes_path)
+            print(f"Created notes directory at {self.notes_path}")
 
     def _ensure_nodes(self):
         query = """
@@ -40,6 +50,35 @@ class TestDataDB:
     def close(self):
         self.connection.close()
 
+    def _generate_random_content(self, filepath):
+        titles = [
+            "Meeting Notes",
+            "Project Ideas",
+            "Thoughts",
+            "Research",
+            "To-Do List",
+        ]
+        paragraphs = [
+            "This is a sample note with some content.",
+            "Important ideas for future reference.",
+            "Remember to follow up on these points.",
+            "Key concepts discussed in the meeting.",
+            "Questions that need answers later.",
+        ]
+
+        title = random.choice(titles)
+        content = [
+            f"# {title} - {filepath}",
+            "",
+            random.choice(paragraphs),
+            "",
+            random.choice(paragraphs),
+            "",
+            f"Created on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
+        ]
+
+        return "\n".join(content)
+
     def insert_random_node(self, filepath: str):
         now_str = datetime.now().isoformat()
         random_color = random.choice(["#8387f1", "#545ac1", "#2e3064"])
@@ -57,6 +96,12 @@ class TestDataDB:
         )
         self.execute(query, params)
 
+        # Create the actual markdown file
+        file_content = self._generate_random_content(filepath)
+        full_path = os.path.join(self.notes_path, filepath)
+        with open(full_path, "w") as f:
+            f.write(file_content)
+
 
 def main():
     if len(sys.argv) != 3:
@@ -69,11 +114,13 @@ def main():
     db = TestDataDB(db_path)
 
     for i in range(number_of_nodes):
-        filepath = f"path/to/node_{i}.md"
+        filepath = f"node_{i}.md"
         db.insert_random_node(filepath)
 
     db.close()
-    print(f"Inserted {number_of_nodes} nodes into {db_path}")
+    print(
+        f"Inserted {number_of_nodes} nodes into {db_path} and created corresponding markdown files"
+    )
 
 
 if __name__ == "__main__":

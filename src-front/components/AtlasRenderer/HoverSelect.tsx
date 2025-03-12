@@ -89,7 +89,7 @@ const HoverSelect = memo(
       };
     }, [gl, handlers]);
 
-    if (!hoverPosition || !isMouseOverCanvas) return null;
+    if (!hoverPosition || !isMouseOverCanvas || !atlas.nodes) return null;
 
     return (
       <mesh position={hoverPosition} renderOrder={1}>

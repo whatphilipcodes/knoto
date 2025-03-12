@@ -93,8 +93,6 @@ const Nodes: FC<NodesProps> = ({
         </Triangle>
         <meshBasicMaterial vertexColors depthTest={false} depthWrite={false} />
       </instancedMesh>
-
-      {/* Static triangle for the map center */}
       <mesh rotation={new Euler(0, 0, Math.PI)}>
         <Triangle size={nodeScale} />
         <meshBasicMaterial
@@ -103,8 +101,6 @@ const Nodes: FC<NodesProps> = ({
           depthWrite={false}
         />
       </mesh>
-
-      {/* All hover logic now contained in this component */}
       <HoverSelect
         data={data}
         nodeScale={nodeScale}

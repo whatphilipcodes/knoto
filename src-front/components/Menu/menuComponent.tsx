@@ -55,7 +55,7 @@ const MenuComponent: FC<MenuComponentProps> = () => {
             <button
               className={menuButtonClasses}
               onClick={async () => {
-                await emit('menu:open-atlas');
+                await emit('menu:load-atlas');
                 setIsMenuOpen(false);
               }}
             >

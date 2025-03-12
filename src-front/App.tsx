@@ -16,10 +16,9 @@ const App = () => {
     const asyncSetup = async () => {
       await application.initAppConfigDir();
       await application.initBackendAPI();
-      // await application.backendAPI?.connect();
       const asyncCleanup: (() => void)[] = [];
       asyncCleanup.push(
-        await listen('menu:open-atlas', async () => {
+        await listen('menu:load-atlas', async () => {
           await application.openAtlasDir();
         }),
         await listen('atlas:open', async (data) => {

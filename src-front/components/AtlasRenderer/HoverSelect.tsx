@@ -6,6 +6,7 @@ import { emit } from '@tauri-apps/api/event';
 import { useNodeHover } from './useNodeHover';
 import { useMouseClick } from './useMouseClick';
 import { NodeData } from '../../utils/types';
+import { useAtlasStore } from '../../store/atlasStore';
 
 interface HoverSelectProps {
   data: NodeData[];
@@ -36,11 +37,15 @@ const HoverSelect = memo(
       onNodeHover,
     });
 
+    const atlas = useAtlasStore();
+
     const handleClick = async () => {
       if (hoverIndex !== null) {
+        const active = data[hoverIndex];
         await emit('atlas:open', {
-          node: data[hoverIndex],
+          node: active,
         });
+        atlas.setActiveNode(active);
       }
     };
 

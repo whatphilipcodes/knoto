@@ -52,14 +52,10 @@ const Placeholder = () => {
 };
 
 interface NoteEditorProps {
-  filePath?: string;
   baseDir?: BaseDirectory;
 }
 
-const NoteEditor: FC<NoteEditorProps> = ({
-  filePath = 'test.md',
-  baseDir = BaseDirectory.Home,
-}) => {
+const NoteEditor: FC<NoteEditorProps> = ({ baseDir = BaseDirectory.Home }) => {
   const atlas = useAtlasStore();
   const editor = useRef<LexicalEditor>(null!);
   const initialConfig = {
@@ -78,31 +74,41 @@ const NoteEditor: FC<NoteEditorProps> = ({
     onError,
   };
 
-  const full_filePath = useMemo(() => {
+  const filePath = useMemo(() => {
+    if (!atlas.activeNode) return null;
     return (
-      atlas.atlasRootDir + sep() + atlas.atlasSubdirNotes + sep() + filePath
+      atlas.atlasRootDir +
+      sep() +
+      atlas.atlasSubdirNotes +
+      sep() +
+      atlas.activeNode.filepath
     );
-  }, [atlas.atlasRootDir]);
+  }, [atlas.activeNode]);
 
   useEffect(() => {
-    if (!editor.current) return;
-    async function loadContent() {
-      const mdContent = await readTextFile(full_filePath, { baseDir });
-      editor.current.update(() => {
-        $convertFromMarkdownString(mdContent, TRANSFORMERS);
-      });
-    }
+    if (!editor.current || !filePath) return;
+    const loadContent = async () => {
+      try {
+        const data = await readTextFile(filePath, { baseDir });
+        editor.current.update(() => {
+          $convertFromMarkdownString(data, TRANSFORMERS);
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    };
     loadContent();
-  }, [full_filePath]);
+  }, [filePath]);
 
   let saveTimer: ReturnType<typeof setTimeout> | null = null;
 
   const onChange = () => {
     if (saveTimer) clearTimeout(saveTimer);
     saveTimer = setTimeout(async () => {
+      if (!filePath) return;
       editor.current.update(() => {
-        const updatedMd = $convertToMarkdownString(TRANSFORMERS);
-        writeTextFile(full_filePath, updatedMd, { baseDir });
+        const data = $convertToMarkdownString(TRANSFORMERS);
+        writeTextFile(filePath, data, { baseDir });
       });
     }, 500);
   };

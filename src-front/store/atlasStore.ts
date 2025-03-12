@@ -17,12 +17,14 @@ const defaultAtlasState = {
   atlasStoreName: 'atlas-config.json',
   atlasDatabaseName: 'atlas.db',
   nodes: null as NodeData[] | null,
+  activeNode: null as NodeData | null,
 };
 
 type AtlasState = typeof defaultAtlasState & {
   setFullState: (newState: AtlasState) => void;
   updateBackend: () => Promise<void>;
   updateNodes: () => Promise<void>;
+  setActiveNode: (activeNode: NodeData) => void;
 };
 
 export const useAtlasStore = create<AtlasState>()(
@@ -62,6 +64,9 @@ export const useAtlasStore = create<AtlasState>()(
           const nodes: NodeData[] = data.nodes;
           set({ nodes });
         });
+      },
+      setActiveNode: (activeNode: NodeData) => {
+        set({ activeNode });
       },
     })),
   ),

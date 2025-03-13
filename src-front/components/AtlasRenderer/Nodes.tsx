@@ -50,7 +50,7 @@ const Nodes: FC<NodesProps> = ({
   }, [data]);
 
   // Set up instance matrices efficiently
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (!ref.current || data.length === 0) return;
 
     if (debug) {

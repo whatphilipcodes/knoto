@@ -36,10 +36,11 @@ import { LinkNode, AutoLinkNode } from '@lexical/link';
 import { ListItemNode, ListNode } from '@lexical/list';
 
 // custom
-import { useAtlasStore } from '../../store/atlasStore';
-import { useRename } from '../../hooks/useRename';
 import GracefulBlur from './plugins/GracefulBlur';
 import FileNamePlugin from './plugins/FileName';
+import ConfirmAddition from './plugins/ConfirmAddition';
+import { useAtlasStore } from '../../store/atlasStore';
+import { useRename } from '../../hooks/useRename';
 import { NodeData } from '../../utils/types';
 import theme from './theme';
 
@@ -66,6 +67,7 @@ interface NoteEditorProps {
 const NoteEditor: FC<NoteEditorProps> = ({ baseDir = BaseDirectory.Home }) => {
   const atlas = useAtlasStore();
   const editor = useRef<LexicalEditor>(null!);
+  const filenameCandidate = useRef<string>(null);
   const { renameFile } = useRename(baseDir);
 
   const initialConfig = {
@@ -114,7 +116,23 @@ const NoteEditor: FC<NoteEditorProps> = ({ baseDir = BaseDirectory.Home }) => {
   const newNote = useCallback(() => {
     atlas.setActiveNode(null);
     clearEditor();
-    console.log('new note');
+  }, []);
+
+  const confirm = useCallback(async () => {
+    if (!filenameCandidate.current) return;
+    const prototype: NodeData = {
+      filepath: filenameCandidate.current,
+      pos: { x: 0, y: 0 },
+      cdt: new Date().toISOString(),
+      mdt: new Date().toISOString(),
+      col: '',
+    };
+    const newNode = await atlas.addNode(prototype);
+    atlas.setActiveNode(newNode);
+  }, []);
+
+  const updateFilenameCandidate = useCallback((name: string) => {
+    filenameCandidate.current = name;
   }, []);
 
   useEffect(() => {
@@ -144,7 +162,10 @@ const NoteEditor: FC<NoteEditorProps> = ({ baseDir = BaseDirectory.Home }) => {
     <div data-info='editor-wrapper' className='relative h-full w-full'>
       <LexicalComposer initialConfig={initialConfig}>
         <EditorRefPlugin editorRef={editor} />
-        <FileNamePlugin onFilenameChange={renameFile} />
+        <FileNamePlugin
+          onChangeImmediate={updateFilenameCandidate}
+          onValidFilenameChange={renameFile}
+        />
         <RichTextPlugin
           contentEditable={<ContentEditable />}
           placeholder={<Placeholder />}
@@ -153,6 +174,7 @@ const NoteEditor: FC<NoteEditorProps> = ({ baseDir = BaseDirectory.Home }) => {
         <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
         <OnChangePlugin onChange={saveContent} />
         <AutoLinkPlugin matchers={MATCHERS} />
+        <ConfirmAddition onConfirm={confirm} />
         <HistoryPlugin />
         <GracefulBlur />
       </LexicalComposer>

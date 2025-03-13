@@ -5,13 +5,14 @@ import { $getRoot } from 'lexical';
 import { useAtlasStore } from '../../../store/atlasStore';
 
 interface FileNamePluginProps {
-  onFilenameChange: (name: string) => void;
+  onChangeImmediate: (name: string) => void;
+  onValidFilenameChange: (name: string) => void;
   filenameLengthLimit?: number;
   debounceTime?: number;
 }
-
 const FileNamePlugin: FC<FileNamePluginProps> = ({
-  onFilenameChange,
+  onChangeImmediate,
+  onValidFilenameChange,
   filenameLengthLimit = 60,
   debounceTime = 500,
 }) => {
@@ -22,9 +23,12 @@ const FileNamePlugin: FC<FileNamePluginProps> = ({
   const currentTitleTextRef = useRef<string>('');
   const atlas = useAtlasStore();
 
-  const debouncedOnFilenameChange = useDebouncedCallback((filename: string) => {
-    onFilenameChange(filename);
-  }, debounceTime);
+  const debouncedOnValidFilenameChange = useDebouncedCallback(
+    (filename: string) => {
+      onValidFilenameChange(filename);
+    },
+    debounceTime,
+  );
 
   useEffect(() => {
     const removeUpdateListener = editor.registerUpdateListener(
@@ -36,7 +40,7 @@ const FileNamePlugin: FC<FileNamePluginProps> = ({
           if (
             !firstChild ||
             !atlas.nodes ||
-            !atlas.activeNode ||
+            // !atlas.activeNode ||
             titleText === currentTitleTextRef.current
           )
             return;
@@ -51,25 +55,26 @@ const FileNamePlugin: FC<FileNamePluginProps> = ({
 
           const isDuplicateFilename =
             isValidFilename &&
-            filename !== atlas.activeNode.filepath &&
+            filename !== atlas.activeNode?.filepath &&
             atlas.nodes.some((node) => node.filepath === filename);
           setIsDuplicate(isDuplicateFilename);
-
           setIsFilenameTruncated(truncated);
+          onChangeImmediate(filename);
 
           if (
-            filename !== atlas.activeNode.filepath &&
+            atlas.activeNode &&
+            filename !== atlas.activeNode?.filepath &&
             isValidFilename &&
             !isDuplicateFilename
           ) {
-            debouncedOnFilenameChange(filename);
+            debouncedOnValidFilenameChange(filename);
           }
         });
       },
     );
 
     return removeUpdateListener;
-  }, [editor, debouncedOnFilenameChange, atlas]);
+  }, [editor, debouncedOnValidFilenameChange, atlas]);
 
   const processFilename = (text: string) => {
     const processedText = text

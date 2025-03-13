@@ -62,7 +62,7 @@ async def set_atlas(atlas_data: AtlasData):
 @app.post("/api/v1/add-nodes")
 async def add_nodes(nodes: list[NodeData] | NodeData):
     results = Store.insert_nodes(nodes)
-    return {"nodes": results}
+    return {"new": results}
 
 
 @app.post("/api/v1/update-node")

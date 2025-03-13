@@ -21,6 +21,17 @@ const AtlasRenderer: FC<AtlasRendererProps> = ({
   // split-view: emit blur event
   const focusAtlas = () => {
     document.dispatchEvent(new CustomEvent('blur:text-editor'));
+    let nodes = atlas.nodes;
+    if (!nodes) return;
+    // nodes.splice(Math.random() * nodes.length);
+    nodes.push({
+      filepath: '',
+      pos: { x: 0.01, y: 0 },
+      mdt: '',
+      cdt: '',
+      col: '#ff0000',
+    });
+    atlas.debugSetNodes(nodes);
   };
 
   // to-do: fix canvas scaling (shrink)
@@ -34,6 +45,7 @@ const AtlasRenderer: FC<AtlasRendererProps> = ({
           data={atlas.nodes ?? []}
           nodeScale={nodeScale}
           atlasScale={atlasScale}
+          debug
         />
         <AtlasControls
           bounds={{ x: atlasScale * 0.5 + 4, y: atlasScale * 0.5 + 4 }}
@@ -41,6 +53,7 @@ const AtlasRenderer: FC<AtlasRendererProps> = ({
       </Canvas>
       <div className='absolute bottom-0 right-0 p-4'>
         <Button
+          variant='secondary'
           onClick={async () => await emit('atlas:new')}
           className='h-10 w-10 px-0'
         >

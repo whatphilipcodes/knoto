@@ -29,11 +29,11 @@ class Store:
 
     @classmethod
     def insert_nodes(cls, nodes: NodeData | list[NodeData]) -> list[NodeData]:
-        if not isinstance(nodes, list[NodeData]):
+        if not isinstance(nodes, list):
             nodes = [nodes]
-
-        results = map(cls.model.infer, nodes)
-        return list(map(cls.db.insert_node, results))
+        results = list(map(cls.model.infer, nodes))
+        map(cls.db.insert_node, results)
+        return results
 
     @classmethod
     def update_node(cls, node: NodeData) -> NodeData:

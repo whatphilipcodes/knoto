@@ -21,7 +21,9 @@ const defaultAtlasState = {
 type AtlasState = typeof defaultAtlasState & {
   setFullState: (newState: AtlasState) => void;
   updateBackend: () => Promise<void>;
-  updateNode: (node: NodeData) => Promise<NodeData>;
+  addNode: (node: Partial<NodeData>) => Promise<NodeData>;
+  debugSetNodes: (node: NodeData[]) => void;
+  updateNode: (node: Partial<NodeData>) => Promise<NodeData>;
   getAllNodes: () => Promise<void>;
   setActiveNode: (activeNode: NodeData | null) => void;
 };
@@ -58,7 +60,26 @@ export const useAtlasStore = create<AtlasState>()(
         };
         await api?.post('/api/v1/set-atlas', data);
       },
-      updateNode: async (node: NodeData) => {
+      addNode: async (node: Partial<NodeData>) => {
+        const api = useApplicationStore.getState().backendAPI;
+        const addedNodes = await api
+          ?.post('/api/v1/add-nodes', node)
+          .then((data: { new: NodeData[] }) => {
+            if (!data.new)
+              throw new Error('backend did not respond with NodeData');
+            let nodes = get().nodes;
+            if (!nodes)
+              throw new Error(
+                'tried to add nodes despite atlas nodes being uninitialized',
+              );
+            nodes.push(...data.new);
+            set({ nodes });
+            return data.new;
+          });
+        if (!addedNodes) throw new Error(`node: ${node} could not be added`);
+        return addedNodes[0]; // to-do: generalize to n nodes
+      },
+      updateNode: async (node: Partial<NodeData>) => {
         const current = get().activeNode?.filepath;
         const api = useApplicationStore.getState().backendAPI;
         const updatedNode = await api
@@ -88,6 +109,7 @@ export const useAtlasStore = create<AtlasState>()(
       setActiveNode: (activeNode: NodeData | null) => {
         set({ activeNode });
       },
+      debugSetNodes: (nodes: NodeData[]) => set({ nodes }),
     })),
   ),
 );

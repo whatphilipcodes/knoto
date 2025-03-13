@@ -9,19 +9,18 @@ import {
 import { sep } from '@tauri-apps/api/path';
 import { listen } from '@tauri-apps/api/event';
 
-import { $getRoot, LexicalEditor } from 'lexical';
-import { LexicalComposer } from '@lexical/react/LexicalComposer';
-import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary';
+import { ContentEditable } from '@lexical/react/LexicalContentEditable';
+import { LexicalComposer } from '@lexical/react/LexicalComposer';
+import { $getRoot, LexicalEditor, $createParagraphNode } from 'lexical';
 
 // plugins
-// import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin';
-import { AutoLinkPlugin } from '@lexical/react/LexicalAutoLinkPlugin';
-import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
-import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
-import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import { MarkdownShortcutPlugin } from '@lexical/react/LexicalMarkdownShortcutPlugin';
 import { EditorRefPlugin } from '@lexical/react/LexicalEditorRefPlugin';
+import { AutoLinkPlugin } from '@lexical/react/LexicalAutoLinkPlugin';
+import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
+import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
+import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin';
 
 // md support
 import {
@@ -31,18 +30,18 @@ import {
 } from '@lexical/markdown';
 
 // nodes
+import { CodeHighlightNode, CodeNode } from '@lexical/code';
 import { HeadingNode, QuoteNode } from '@lexical/rich-text';
 import { LinkNode, AutoLinkNode } from '@lexical/link';
 import { ListItemNode, ListNode } from '@lexical/list';
-import { CodeHighlightNode, CodeNode } from '@lexical/code';
 
 // custom
-import FileNamePlugin from './plugins/FileName';
-import GracefulBlur from './plugins/GracefulBlur';
-import theme from './theme';
 import { useAtlasStore } from '../../store/atlasStore';
 import { useRename } from '../../hooks/useRename';
+import GracefulBlur from './plugins/GracefulBlur';
+import FileNamePlugin from './plugins/FileName';
 import { NodeData } from '../../utils/types';
+import theme from './theme';
 
 const onError = (error: Error) => {
   console.error(error);
@@ -106,18 +105,17 @@ const NoteEditor: FC<NoteEditorProps> = ({ baseDir = BaseDirectory.Home }) => {
     [basePath],
   );
 
-  const saveContent = useDebouncedCallback(async () => {
-    if (!basePath || !atlas.activeNode) return;
-    const filePath = basePath + atlas.activeNode.filepath;
+  const clearEditor = useCallback(() => {
     editor.current.update(() => {
-      const data = $convertToMarkdownString(TRANSFORMERS);
-      writeTextFile(filePath, data, { baseDir });
+      $getRoot().clear().append($createParagraphNode());
     });
-  }, 500);
+  }, []);
 
-  const onChange = () => {
-    saveContent();
-  };
+  const newNote = useCallback(() => {
+    atlas.setActiveNode(null);
+    clearEditor();
+    console.log('new note');
+  }, []);
 
   useEffect(() => {
     const asyncSetup = async () => {
@@ -131,17 +129,16 @@ const NoteEditor: FC<NoteEditorProps> = ({ baseDir = BaseDirectory.Home }) => {
     return () => {
       asyncCleanup.then((cfa) => cfa.forEach((f) => f()));
     };
-  }, [loadContent]);
+  }, [loadContent, newNote]);
 
-  const clearEditor = () => {
+  const saveContent = useDebouncedCallback(async () => {
+    if (!basePath || !atlas.activeNode) return;
+    const filePath = basePath + atlas.activeNode.filepath;
     editor.current.update(() => {
-      $getRoot().clear();
+      const data = $convertToMarkdownString(TRANSFORMERS);
+      writeTextFile(filePath, data, { baseDir });
     });
-  };
-
-  const newNote = () => {
-    console.log('new note');
-  };
+  }, 500);
 
   return (
     <div data-info='editor-wrapper' className='relative h-full w-full'>
@@ -154,9 +151,9 @@ const NoteEditor: FC<NoteEditorProps> = ({ baseDir = BaseDirectory.Home }) => {
           ErrorBoundary={LexicalErrorBoundary}
         />
         <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
-        <OnChangePlugin onChange={onChange} />
-        <HistoryPlugin />
+        <OnChangePlugin onChange={saveContent} />
         <AutoLinkPlugin matchers={MATCHERS} />
+        <HistoryPlugin />
         <GracefulBlur />
       </LexicalComposer>
     </div>

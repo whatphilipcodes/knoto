@@ -7,23 +7,24 @@ import { useAtlasStore } from '../../../store/atlasStore';
 interface FileNamePluginProps {
   onFilenameChange: (name: string) => void;
   filenameLengthLimit?: number;
+  debounceTime?: number;
 }
 
 const FileNamePlugin: FC<FileNamePluginProps> = ({
   onFilenameChange,
   filenameLengthLimit = 60,
+  debounceTime = 500,
 }) => {
   const [editor] = useLexicalComposerContext();
   const [isFilenameTruncated, setIsFilenameTruncated] = useState(false);
   const [isFilenameInvalid, setIsFilenameInvalid] = useState(false);
   const [isDuplicate, setIsDuplicate] = useState(false);
   const currentTitleTextRef = useRef<string>('');
-  const currentFilenameRef = useRef<string>('');
   const atlas = useAtlasStore();
 
   const debouncedOnFilenameChange = useDebouncedCallback((filename: string) => {
     onFilenameChange(filename);
-  }, 500);
+  }, debounceTime);
 
   useEffect(() => {
     const removeUpdateListener = editor.registerUpdateListener(
@@ -35,6 +36,7 @@ const FileNamePlugin: FC<FileNamePluginProps> = ({
           if (
             !firstChild ||
             !atlas.nodes ||
+            !atlas.activeNode ||
             titleText === currentTitleTextRef.current
           )
             return;
@@ -49,17 +51,18 @@ const FileNamePlugin: FC<FileNamePluginProps> = ({
 
           const isDuplicateFilename =
             isValidFilename &&
-            atlas.nodes.some((node) => node.filepath === `${filename}.md`);
+            filename !== atlas.activeNode.filepath &&
+            atlas.nodes.some((node) => node.filepath === filename);
+          console.log(isDuplicateFilename, filename, atlas.activeNode.filepath);
           setIsDuplicate(isDuplicateFilename);
 
           setIsFilenameTruncated(truncated);
 
           if (
-            filename !== currentFilenameRef.current &&
+            filename !== atlas.activeNode.filepath &&
             isValidFilename &&
             !isDuplicateFilename
           ) {
-            currentFilenameRef.current = filename;
             debouncedOnFilenameChange(filename);
           }
         });
@@ -67,7 +70,7 @@ const FileNamePlugin: FC<FileNamePluginProps> = ({
     );
 
     return removeUpdateListener;
-  }, [editor, atlas.nodes, debouncedOnFilenameChange]);
+  }, [editor, debouncedOnFilenameChange, atlas]);
 
   const processFilename = (text: string) => {
     const processedText = text
@@ -80,8 +83,8 @@ const FileNamePlugin: FC<FileNamePluginProps> = ({
     const isValid = processedText.length > 0 && !/^-+$/.test(processedText);
     const truncated = processedText.length > filenameLengthLimit;
     const filename = truncated
-      ? processedText.slice(0, filenameLengthLimit)
-      : processedText;
+      ? `${processedText.slice(0, filenameLengthLimit)}.md`
+      : `${processedText}.md`;
 
     return { filename, truncated, isValid };
   };

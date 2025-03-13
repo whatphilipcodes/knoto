@@ -23,7 +23,7 @@ type AtlasState = typeof defaultAtlasState & {
   updateBackend: () => Promise<void>;
   updateNode: (node: NodeData) => Promise<NodeData>;
   getAllNodes: () => Promise<void>;
-  setActiveNode: (activeNode: NodeData) => void;
+  setActiveNode: (activeNode: NodeData | null) => void;
 };
 
 export const useAtlasStore = create<AtlasState>()(
@@ -85,7 +85,7 @@ export const useAtlasStore = create<AtlasState>()(
           set({ nodes });
         });
       },
-      setActiveNode: (activeNode: NodeData) => {
+      setActiveNode: (activeNode: NodeData | null) => {
         set({ activeNode });
       },
     })),

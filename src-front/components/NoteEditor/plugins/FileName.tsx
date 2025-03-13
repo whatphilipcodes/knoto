@@ -53,7 +53,6 @@ const FileNamePlugin: FC<FileNamePluginProps> = ({
             isValidFilename &&
             filename !== atlas.activeNode.filepath &&
             atlas.nodes.some((node) => node.filepath === filename);
-          console.log(isDuplicateFilename, filename, atlas.activeNode.filepath);
           setIsDuplicate(isDuplicateFilename);
 
           setIsFilenameTruncated(truncated);

@@ -89,4 +89,5 @@ def start_api_server():
 
 
 if __name__ == "__main__":
+    Store.init()
     start_api_server()

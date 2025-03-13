@@ -21,7 +21,7 @@ const defaultAtlasState = {
 type AtlasState = typeof defaultAtlasState & {
   setFullState: (newState: AtlasState) => void;
   updateBackend: () => Promise<void>;
-  updateNode: (node: NodeData) => Promise<void>;
+  updateNode: (node: NodeData) => Promise<NodeData>;
   getAllNodes: () => Promise<void>;
   setActiveNode: (activeNode: NodeData) => void;
 };
@@ -59,8 +59,9 @@ export const useAtlasStore = create<AtlasState>()(
         await api?.post('/api/v1/set-atlas', data);
       },
       updateNode: async (node: NodeData) => {
+        const current = get().activeNode?.filepath;
         const api = useApplicationStore.getState().backendAPI;
-        api
+        const updatedNode = await api
           ?.post('/api/v1/update-node', node)
           .then((data: { new: NodeData }) => {
             let nodes = get().nodes;
@@ -69,10 +70,13 @@ export const useAtlasStore = create<AtlasState>()(
                 'tried to update nodes even though no nodes are loaded in',
               );
             nodes = nodes.map((node) =>
-              node.filepath === data.new.filepath ? data.new : node,
+              node.filepath === current ? data.new : node,
             );
             set({ nodes });
+            return data.new;
           });
+        if (!updatedNode) throw new Error(`node: ${node} could not be updated`);
+        return updatedNode;
       },
       getAllNodes: async () => {
         const api = useApplicationStore.getState().backendAPI;

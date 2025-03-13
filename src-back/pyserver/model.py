@@ -8,8 +8,8 @@ class Model:
     def __init__(self):
         self.model_instance = "model"
 
-    def infer(node: NodeData) -> NodeData:
+    def infer(self, node: NodeData) -> NodeData:
         print("inferring: ", node.filepath)
-        node.x = random.random()
-        node.y = random.random()
+        node.pos.x = random.random()
+        node.pos.y = random.random()
         return node

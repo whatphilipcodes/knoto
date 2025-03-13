@@ -15,6 +15,10 @@ class Store:
         raise TypeError("Store cannot be instantiated")
 
     @classmethod
+    def init(cls) -> None:
+        cls.model = Model()
+
+    @classmethod
     def set_atlas(cls, root: str, id_database: str) -> None:
         cls.atlas_root = root
         cls.db_path = os.path.join(root, id_database)
@@ -33,9 +37,9 @@ class Store:
 
     @classmethod
     def update_node(cls, node: NodeData) -> NodeData:
-        result = cls.model.infer(node)
-        cls.db.update_node(result)
-        return result
+        # result = cls.model.infer(node)
+        cls.db.update_node(node)
+        return node
 
     @classmethod
     def delete_node(cls, filepath: str) -> None:

@@ -1,4 +1,4 @@
-import { type FC, useRef, useEffect, useMemo } from 'react';
+import { type FC, useRef, useEffect, useMemo, useCallback } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { CornerDownLeft } from 'lucide-react';
 import {
@@ -41,6 +41,8 @@ import FileNamePlugin from './plugins/FileName';
 import GracefulBlur from './plugins/GracefulBlur';
 import theme from './theme';
 import { useAtlasStore } from '../../store/atlasStore';
+import { useRename } from '../../hooks/useRename';
+import { NodeData } from '../../utils/types';
 
 const onError = (error: Error) => {
   console.error(error);
@@ -65,6 +67,8 @@ interface NoteEditorProps {
 const NoteEditor: FC<NoteEditorProps> = ({ baseDir = BaseDirectory.Home }) => {
   const atlas = useAtlasStore();
   const editor = useRef<LexicalEditor>(null!);
+  const { renameFile } = useRename(baseDir);
+
   const initialConfig = {
     namespace: 'text-editor',
     theme,
@@ -81,20 +85,15 @@ const NoteEditor: FC<NoteEditorProps> = ({ baseDir = BaseDirectory.Home }) => {
     onError,
   };
 
-  const filePath = useMemo(() => {
-    if (!atlas.activeNode) return null;
-    return (
-      atlas.atlasRootDir +
-      sep() +
-      atlas.atlasSubdirNotes +
-      sep() +
-      atlas.activeNode.filepath
-    );
-  }, [atlas.activeNode]);
+  const basePath = useMemo(() => {
+    return atlas.atlasRootDir + sep() + atlas.atlasSubdirNotes + sep();
+  }, [atlas.atlasRootDir, atlas.atlasSubdirNotes]);
 
-  useEffect(() => {
-    if (!editor.current || !filePath) return;
-    const loadContent = async () => {
+  const loadContent = useCallback(
+    async (tauriEvent: any) => {
+      const node: NodeData = tauriEvent.payload.node;
+      const filePath = basePath + node.filepath;
+      if (!editor.current || !filePath) return;
       try {
         const data = await readTextFile(filePath, { baseDir });
         editor.current.update(() => {
@@ -103,13 +102,13 @@ const NoteEditor: FC<NoteEditorProps> = ({ baseDir = BaseDirectory.Home }) => {
       } catch (error) {
         console.log(error);
       }
-    };
-    loadContent();
-  }, [filePath]);
+    },
+    [basePath],
+  );
 
   const saveContent = useDebouncedCallback(async () => {
-    if (!filePath) return;
-
+    if (!basePath || !atlas.activeNode) return;
+    const filePath = basePath + atlas.activeNode.filepath;
     editor.current.update(() => {
       const data = $convertToMarkdownString(TRANSFORMERS);
       writeTextFile(filePath, data, { baseDir });
@@ -124,6 +123,7 @@ const NoteEditor: FC<NoteEditorProps> = ({ baseDir = BaseDirectory.Home }) => {
     const asyncSetup = async () => {
       const asyncCleanup: (() => void)[] = [];
       asyncCleanup.push(await listen('atlas:new', newNote));
+      asyncCleanup.push(await listen('atlas:open', loadContent));
       asyncCleanup.push(await listen('fs:atlas-load', clearEditor));
       return asyncCleanup;
     };
@@ -131,7 +131,7 @@ const NoteEditor: FC<NoteEditorProps> = ({ baseDir = BaseDirectory.Home }) => {
     return () => {
       asyncCleanup.then((cfa) => cfa.forEach((f) => f()));
     };
-  }, []);
+  }, [loadContent]);
 
   const clearEditor = () => {
     editor.current.update(() => {
@@ -147,11 +147,7 @@ const NoteEditor: FC<NoteEditorProps> = ({ baseDir = BaseDirectory.Home }) => {
     <div data-info='editor-wrapper' className='relative h-full w-full'>
       <LexicalComposer initialConfig={initialConfig}>
         <EditorRefPlugin editorRef={editor} />
-        <FileNamePlugin
-          onFilenameChange={(name) => {
-            console.log('filename: ', name);
-          }}
-        />
+        <FileNamePlugin onFilenameChange={renameFile} />
         <RichTextPlugin
           contentEditable={<ContentEditable />}
           placeholder={<Placeholder />}

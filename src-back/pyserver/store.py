@@ -32,7 +32,8 @@ class Store:
         if not isinstance(nodes, list):
             nodes = [nodes]
         results = list(map(cls.model.infer, nodes))
-        map(cls.db.insert_node, results)
+        for result in results:
+            cls.db.insert_node(result)
         return results
 
     @classmethod

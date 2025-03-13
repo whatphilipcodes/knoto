@@ -6,7 +6,7 @@ interface GracefulBlurProps {
 }
 
 const GracefulBlur: FC<GracefulBlurProps> = ({
-  events = ['blur:text-editor'],
+  events = ['atlas:blur-editor'],
 }) => {
   const [editor] = useLexicalComposerContext();
 
@@ -30,5 +30,4 @@ const GracefulBlur: FC<GracefulBlurProps> = ({
 
   return null;
 };
-
 export default GracefulBlur;

@@ -4,7 +4,7 @@ import { useThree } from '@react-three/fiber';
 import Triangle from './Triangle';
 import { emit } from '@tauri-apps/api/event';
 import { useNodeHover } from './useNodeHover';
-import { useMouseClick } from './useMouseClick';
+import useMouseClick from './useMouseClick';
 import { NodeData } from '../../utils/types';
 import { useAtlasStore } from '../../store/atlasStore';
 

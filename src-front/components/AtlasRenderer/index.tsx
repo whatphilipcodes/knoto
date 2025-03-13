@@ -1,10 +1,10 @@
-import { FC } from 'react';
 import { Canvas } from '@react-three/fiber';
-import AtlasControls from './AtlasControls';
+import { FC } from 'react';
 import Nodes from './Nodes';
 import Button from '../Primitives/Button';
 import { Plus } from 'lucide-react';
 import { emit } from '@tauri-apps/api/event';
+import AtlasControls from './AtlasControls';
 import { useAtlasStore } from '../../store/atlasStore';
 
 interface AtlasRendererProps {
@@ -20,18 +20,7 @@ const AtlasRenderer: FC<AtlasRendererProps> = ({
 
   // split-view: emit blur event
   const focusAtlas = () => {
-    document.dispatchEvent(new CustomEvent('blur:text-editor'));
-    let nodes = atlas.nodes;
-    if (!nodes) return;
-    // nodes.splice(Math.random() * nodes.length);
-    nodes.push({
-      filepath: '',
-      pos: { x: 0.01, y: 0 },
-      mdt: '',
-      cdt: '',
-      col: '#ff0000',
-    });
-    atlas.debugSetNodes(nodes);
+    document.dispatchEvent(new CustomEvent('atlas:blur-editor'));
   };
 
   // to-do: fix canvas scaling (shrink)
@@ -45,7 +34,6 @@ const AtlasRenderer: FC<AtlasRendererProps> = ({
           data={atlas.nodes ?? []}
           nodeScale={nodeScale}
           atlasScale={atlasScale}
-          debug
         />
         <AtlasControls
           bounds={{ x: atlasScale * 0.5 + 4, y: atlasScale * 0.5 + 4 }}

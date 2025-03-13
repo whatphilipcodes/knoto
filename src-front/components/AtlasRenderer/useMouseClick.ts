@@ -7,7 +7,7 @@ type PointerEvent = React.PointerEvent<any>;
  * @param onClick Function to call when a click without drag is detected
  * @param dragThreshold Pixel distance to consider as a drag
  */
-export function useMouseClick(onClick: () => void, dragThreshold = 5) {
+const useMouseClick = (onClick: () => void, dragThreshold = 5) => {
   const [isDragging, setIsDragging] = useState(false);
   const startPosRef = useRef<{ x: number; y: number } | null>(null);
 
@@ -49,4 +49,5 @@ export function useMouseClick(onClick: () => void, dragThreshold = 5) {
     },
     isDragging,
   };
-}
+};
+export default useMouseClick;

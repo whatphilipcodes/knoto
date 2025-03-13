@@ -32,7 +32,7 @@ const Nodes: FC<NodesProps> = ({
       new Vector2(0, 0),
     );
     return sum.divideScalar(data.length);
-  }, [data]);
+  }, [data, data.length]);
 
   if (debug) {
     useEffect(() => {
@@ -47,10 +47,10 @@ const Nodes: FC<NodesProps> = ({
     return new Float32Array(
       data.map(({ col }) => new Color(col).toArray()).flat(),
     );
-  }, [data]);
+  }, [data, data.length]);
 
   // Set up instance matrices efficiently
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!ref.current || data.length === 0) return;
 
     if (debug) {
@@ -80,7 +80,7 @@ const Nodes: FC<NodesProps> = ({
     if (debug) {
       console.log('Instance matrices updated');
     }
-  }, [data, atlasScale, center, origin, debug]);
+  }, [data, data.length, atlasScale, center, origin, debug]);
 
   return (
     <>

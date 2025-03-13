@@ -18,7 +18,7 @@ const defaultAtlasState = {
   activeNode: null as NodeData | null,
 };
 
-type AtlasState = typeof defaultAtlasState & {
+export type AtlasState = typeof defaultAtlasState & {
   setFullState: (newState: AtlasState) => void;
   updateBackend: () => Promise<void>;
   addNode: (node: Partial<NodeData>) => Promise<NodeData>;

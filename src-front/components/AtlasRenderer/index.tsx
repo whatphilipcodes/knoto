@@ -14,7 +14,7 @@ interface AtlasRendererProps {
 
 const AtlasRenderer: FC<AtlasRendererProps> = ({
   atlasScale = 1000,
-  nodeScale = 0.2,
+  nodeScale = 1,
 }) => {
   const atlas = useAtlasStore();
 

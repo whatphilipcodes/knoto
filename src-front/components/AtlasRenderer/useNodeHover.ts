@@ -74,7 +74,7 @@ export function useNodeHover({
     }
 
     return { grid, cellSize, bounds: { min, max } };
-  }, [data, debug]);
+  }, [data, data.length, debug]);
 
   // Handle hover detection efficiently using spatial index
   useFrame(() => {

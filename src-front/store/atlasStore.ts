@@ -155,7 +155,7 @@ const initAtlasDir = async (state: AtlasState) => {
     if (!(await exists(noteSub, { baseDir: BaseDirectory.Home })))
       await mkdir(noteSub, { baseDir: BaseDirectory.Home });
   } catch (error) {
-    await emit('fs:atlas-error');
+    // await emit('fs:atlas-error'); // shows when creating new store
   }
 };
 

@@ -45,6 +45,7 @@ import { useAtlasStore } from '../../store/atlasStore';
 import { useRename } from '../../hooks/useRename';
 import { NodeData } from '../../utils/types';
 import theme from './theme';
+import { save } from '@tauri-apps/plugin-dialog';
 
 const onError = (error: Error) => {
   console.error(error);
@@ -138,6 +139,7 @@ const NoteEditor: FC<NoteEditorProps> = ({ baseDir = BaseDirectory.Home }) => {
       col: '',
     };
     const newNode = await atlas.addNode(prototype);
+    saveContent();
     atlas.setActiveNode(newNode);
   }, []);
 

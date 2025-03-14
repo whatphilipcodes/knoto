@@ -66,10 +66,11 @@ class TestDataDB:
             "Questions that need answers later.",
         ]
 
-        title = random.choice(titles)
+        subtitle = random.choice(titles)
         content = [
-            f"# {title} - {filepath}",
+            f"### {filepath}",
             "",
+            f"# {subtitle}",
             random.choice(paragraphs),
             "",
             random.choice(paragraphs),

@@ -24,7 +24,7 @@ const MenuStatus: FC<MenuStatusProps> = () => {
     };
   }, []);
   return (
-    <div className='text-red-500'>
+    <div className='text-rose-600'>
       {error
         ? 'an error occured: the atlas you last opened was moved, deleted or is damaged'
         : ''}

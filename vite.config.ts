@@ -3,6 +3,7 @@ import { spawnSync } from 'child_process';
 
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
+import glsl from 'vite-plugin-glsl';
 
 // using this plugin instead of adding the command to the tauri config prevents ecycle error in dev mode
 const runPyInstall = () => {
@@ -18,7 +19,7 @@ const host = process.env.TAURI_DEV_HOST;
 
 // https://vitejs.dev/config/
 export default defineConfig(async () => ({
-  plugins: [runPyInstall(), tailwindcss(), react()],
+  plugins: [runPyInstall(), tailwindcss(), react(), glsl()],
 
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   //

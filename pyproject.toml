@@ -2,13 +2,14 @@
 name = "knoto"
 version = "0.1.0"
 description = "spatial knowledge organization"
-authors = [ "whatphilipcodes <gerdes.philip@gmail.com>" ]
+authors = [ "whatphilipcodes <hello@whatphilipdoes.com>" ]
 readme = "README.md"
 package-mode = false
 
   [tool.poetry.dependencies]
   python = ">=3.12,<3.14"
   pyinstaller = "^6.11.1"
+  numpy = "^2.2.3"
 
     [tool.poetry.dependencies.fastapi]
     extras = [ "standard" ]

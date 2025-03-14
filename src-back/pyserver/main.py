@@ -1,66 +1,24 @@
 import sys
-import argparse
 import uvicorn
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from dataclasses import dataclass
-from typing import Optional
 
-
-@dataclass
-class CommandLineArgs:
-    dev: Optional[bool]
-    port: Optional[int]
-    devurl: Optional[str]
-
-
-def parse_arguments() -> CommandLineArgs:
-    parser = argparse.ArgumentParser(description="pyserver backend API")
-    parser.add_argument(
-        "--dev",
-        "-d",
-        action="store_true",
-        default=False,
-        help="enable development mode",
-        required=False,
-    )
-    parser.add_argument(
-        "--port",
-        type=int,
-        default=8000,
-        help="port number at which the uvicorn server is initialized at (default: 8000)",
-        required=False,
-    )
-    parser.add_argument(
-        "--devurl",
-        type=str,
-        default="http://localhost:1420",
-        help="vite dev server url; must include a port number (default: http://localhost:1420)",
-        required=False,
-    )
-    args = parser.parse_args()
-
-    if args.port < 1024 or args.port > 65535:
-        raise ValueError("Port must be between 1024 and 65535")
-
-    return args
+from store import Store
+from utils import AtlasData, NodeData, UpdateNodeRequest
+from cli import parse_arguments
 
 
 args = parse_arguments()
 cors_origins = ["tauri://localhost", "http://tauri.localhost"]
 
 if args.dev:
-    # Enable immediate prints in dev mode
     sys.stdout.reconfigure(line_buffering=True)
-    # Add dev origin to CORS
     cors_origins.append(args.devurl)
 
 app = FastAPI(
-    title="taupy-backend-api",
+    title="knoto-backend-api",
     version="1.0.0",
 )
-
-# CORS config
 app.add_middleware(
     CORSMiddleware,
     allow_origins=cors_origins,
@@ -89,6 +47,40 @@ async def connect():
     }
 
 
+@app.get("/api/v1/get-all-nodes")
+async def get_all_nodes():
+    nodes = Store.get_all_nodes()
+    return {"nodes": nodes}
+
+
+@app.post("/api/v1/set-atlas")
+async def set_atlas(atlas_data: AtlasData):
+    Store.set_atlas(
+        atlas_data.root,
+        atlas_data.subdir_nodes,
+        atlas_data.id_database,
+    )
+    return {"message": f"new atlas root dir set: {Store.atlas_root}"}
+
+
+@app.post("/api/v1/add-nodes")
+async def add_nodes(nodes: list[NodeData] | NodeData):
+    results = Store.insert_nodes(nodes)
+    return {"new": results}
+
+
+@app.post("/api/v1/update-node")
+async def update_node(request: UpdateNodeRequest):
+    new = Store.update_node(request.current, request.updated)
+    return {"new": new}
+
+
+@app.delete("/api/v1/nodes/{filepath:path}")
+async def delete_node(filepath: str):
+    Store.delete_node(filepath)
+    return {"message": f"node deleted in {Store.db_path}: {filepath}"}
+
+
 def start_api_server():
     try:
         print("starting API server...")
@@ -101,4 +93,5 @@ def start_api_server():
 
 
 if __name__ == "__main__":
+    Store.init()
     start_api_server()

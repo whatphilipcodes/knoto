@@ -1,19 +1,50 @@
-import './App.css';
-import ConnectButton from './ConnectButton';
-import knotoIcon from './assets/knoto.svg';
+import './styles/app.css';
+import { useLayoutEffect } from 'react';
+import Menu from './components/Menu';
+import AtlasRenderer from './components/AtlasRenderer';
+import NoteEditor from './components/NoteEditor';
+//
+import { listen } from '@tauri-apps/api/event';
+//
+import { useApplicationStore } from './store/applicationStore';
+import { subscribeColToApp } from './store/atlasStore';
 
-function App() {
+const App = () => {
+  const application = useApplicationStore();
+
+  useLayoutEffect(() => {
+    const asyncSetup = async () => {
+      await application.initAppConfigDir();
+      await application.initBackendAPI();
+      const asyncCleanup: (() => void)[] = [];
+      asyncCleanup.push(
+        await listen('menu:load-atlas', async () => {
+          await application.openAtlasDir();
+        }),
+        await listen('atlas:open', async (data) => {
+          console.log('atlas:open', data);
+        }),
+        await listen('atlas:new', async () => {
+          console.log('atlas:new');
+        }),
+      );
+      subscribeColToApp(); // has to run after api init
+      return asyncCleanup;
+    };
+    const asyncCleanup = asyncSetup();
+    return () => {
+      asyncCleanup.then((cfa) => cfa.forEach((f) => f()));
+    };
+  }, []);
+
   return (
-    <main className='flex flex-col gap-4 p-12 font-normal text-neutral-950 dark:text-neutral-50'>
-      <img src={knotoIcon} className='h-[80px] self-start' />
-      <p>
-        The Python API is starting in the background. This demo setup is not
-        showing any loading state. Because of that, inital connection attemps
-        might fail until the uvicorn server has been launched successfully.
-      </p>
-      <ConnectButton />
+    <main className='flex h-full w-full flex-col gap-4 p-4 font-normal text-neutral-950 dark:text-neutral-50'>
+      <Menu />
+      <div className='flex h-full w-full shrink grow gap-4'>
+        <AtlasRenderer />
+        <NoteEditor />
+      </div>
     </main>
   );
-}
-
+};
 export default App;

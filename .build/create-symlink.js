@@ -8,8 +8,12 @@ if (!linkInput || !targetInput) {
   process.exit(1);
 }
 
-const linkSegments = linkInput.replace('\\', '/').split('/');
-const targetSegments = targetInput.replace('\\', '/').split('/');
+let linkSegments = linkInput.replace('\\', '/').split('/');
+let targetSegments = targetInput.replace('\\', '/').split('/');
+
+// additional processing for Windows paths
+linkSegments = linkSegments.map(segment => segment.replace(/'/g, ""));
+targetSegments = targetSegments.map(segment => segment.replace(/'/g, ""));
 
 const root = dirname('.');
 const link = join(root, ...linkSegments);

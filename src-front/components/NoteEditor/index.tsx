@@ -2,6 +2,7 @@ import { type FC, useRef, useEffect, useMemo, useCallback } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { CornerDownLeft } from 'lucide-react';
 import {
+  remove,
   readTextFile,
   writeTextFile,
   BaseDirectory,
@@ -38,6 +39,7 @@ import { ListItemNode, ListNode } from '@lexical/list';
 // custom
 import GracefulBlur from './plugins/GracefulBlur';
 import FileNamePlugin from './plugins/FileName';
+import ToolbarPlugin from './plugins/Toolbar';
 import ConfirmAddition from './plugins/ConfirmAddition';
 import { useAtlasStore } from '../../store/atlasStore';
 import { useRename } from '../../hooks/useRename';
@@ -50,7 +52,7 @@ const onError = (error: Error) => {
 
 const Placeholder = () => {
   return (
-    <div className='pointer-events-none absolute left-4 top-6 flex flex-row items-center gap-4 opacity-50'>
+    <div className='top-18 pointer-events-none absolute left-4 flex flex-row items-center gap-4 opacity-50'>
       <div>filename</div>
       <div>+</div>
       <div className='flex h-4 items-center rounded-sm border p-2'>
@@ -116,7 +118,15 @@ const NoteEditor: FC<NoteEditorProps> = ({ baseDir = BaseDirectory.Home }) => {
   const newNote = useCallback(() => {
     atlas.setActiveNode(null);
     clearEditor();
-  }, []);
+  }, [atlas]);
+
+  const deleteActiveNode = useCallback(async () => {
+    const active = atlas.activeNode;
+    if (!active) throw new Error('no note selected to delete');
+    await atlas.removeNode(active);
+    await remove(basePath + active.filepath);
+    clearEditor();
+  }, [atlas, basePath]);
 
   const confirm = useCallback(async () => {
     if (!filenameCandidate.current) return;
@@ -159,9 +169,13 @@ const NoteEditor: FC<NoteEditorProps> = ({ baseDir = BaseDirectory.Home }) => {
   }, 500);
 
   return (
-    <div data-info='editor-wrapper' className='relative h-full w-full'>
+    <div
+      data-info='editor-wrapper'
+      className='relative h-full w-full rounded-md border border-neutral-700 focus-within:border-teal-500 focus:border-teal-500'
+    >
       <LexicalComposer initialConfig={initialConfig}>
         <EditorRefPlugin editorRef={editor} />
+        <ToolbarPlugin onDelete={deleteActiveNode} />
         <FileNamePlugin
           onChangeImmediate={updateFilenameCandidate}
           onValidFilenameChange={renameFile}

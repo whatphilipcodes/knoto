@@ -4,7 +4,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 from store import Store
-from utils import AtlasData, NodeData
+from utils import AtlasData, NodeData, UpdateNodeRequest
 from cli import parse_arguments
 
 
@@ -66,8 +66,8 @@ async def add_nodes(nodes: list[NodeData] | NodeData):
 
 
 @app.post("/api/v1/update-node")
-async def update_node(node: NodeData):
-    new = Store.update_node(node)
+async def update_node(request: UpdateNodeRequest):
+    new = Store.update_node(request.current, request.updated)
     return {"new": new}
 
 

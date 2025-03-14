@@ -109,3 +109,4 @@ To generate an actual usable debug build in that location, run the `debug-build`
 ### known issues
 
 - [ ] selecting multiple notes after each other before the editor completes a renaming op crashes the atlas
+- [ ] r3f canvas won't dynamically size down when the window size is changed

@@ -22,13 +22,13 @@ export function useRename(baseDir: BaseDirectory = BaseDirectory.Home) {
         const current = atlas.activeNode;
         if (!current) break;
 
-        const node = {
+        const updated = {
           ...current,
           filepath: currentName,
         };
-        const updatedNode = await atlas.updateNode(node);
-        atlas.setActiveNode(updatedNode);
-        await rename(path + current.filepath, path + updatedNode.filepath, {
+        const completed = await atlas.updateNode(updated);
+        atlas.setActiveNode(completed);
+        await rename(path + current.filepath, path + completed.filepath, {
           oldPathBaseDir: baseDir,
           newPathBaseDir: baseDir,
         });

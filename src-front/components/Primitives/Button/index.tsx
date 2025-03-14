@@ -3,7 +3,7 @@ import { twMerge } from 'tailwind-merge';
 import { wrapRawNodes } from './utils';
 
 const baseStyles =
-  'twd cursor-pointer flex flex-row flex-nowrap justify-center gap-2 items-center rounded-md py-2 px-4 no-underline!';
+  'twd cursor-pointer flex flex-row flex-nowrap justify-center gap-2 items-center rounded-md py-2 px-4';
 const variantStyles = {
   primary:
     'twd dark:border-teal-500 dark:text-teal-500 dark:hover:bg-teal-500/10 dark:active:bg-teal-500/20 border border-neutral-900 text-neutral-900 ease-out hover:bg-neutral-300 active:bg-neutral-400',

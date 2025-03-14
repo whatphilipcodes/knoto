@@ -18,3 +18,8 @@ class NodeData(BaseModel):
     cdt: str
     mdt: str
     col: str
+
+
+class UpdateNodeRequest(BaseModel):
+    current: NodeData
+    updated: NodeData

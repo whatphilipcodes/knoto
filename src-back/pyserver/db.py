@@ -59,16 +59,26 @@ class AtlasDB:
         )
         self.execute(query, params)
 
-    def update_node(self, node: NodeData):
-        query = """
-        UPDATE nodes
-        SET x = ?, y = ?, cdt = ?, mdt = ?, col = ?
-        WHERE filepath = ?
-        """
-        params = (node.pos.x, node.pos.y, node.cdt, node.mdt, node.col, node.filepath)
-        self.execute(query, params)
+    def update_node(self, old: NodeData, node: NodeData):
+        delete_query = "DELETE FROM nodes WHERE filepath = ?"
+        delete_params = (old.filepath,)
+        self.execute(delete_query, delete_params)
 
-    # to-do: chunked stream apporach
+        insert_query = """
+        INSERT INTO nodes (filepath, x, y, cdt, mdt, col)
+        VALUES (?, ?, ?, ?, ?, ?)
+        """
+        insert_params = (
+            node.filepath,
+            node.pos.x,
+            node.pos.y,
+            node.cdt,
+            node.mdt,
+            node.col,
+        )
+        self.execute(insert_query, insert_params)
+
+    # to-do: chunked stream approach
     def get_all_nodes(self):
         query = "SELECT filepath, x, y, cdt, mdt, col FROM nodes"
         cursor = self.execute(query)

@@ -37,13 +37,14 @@ class Store:
         return results
 
     @classmethod
-    def update_node(cls, node: NodeData) -> NodeData:
+    def update_node(cls, old: NodeData, new: NodeData) -> NodeData:
         # result = cls.model.infer(node)
-        cls.db.update_node(node)
-        return node
+        cls.db.update_node(old, new)
+        return new
 
     @classmethod
     def delete_node(cls, filepath: str) -> None:
+        print("delete for: ", filepath)
         cls.db.delete_node(filepath)
 
     @classmethod

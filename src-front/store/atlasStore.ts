@@ -22,7 +22,8 @@ export type AtlasState = typeof defaultAtlasState & {
   setFullState: (newState: AtlasState) => void;
   updateBackend: () => Promise<void>;
   addNode: (node: Partial<NodeData>) => Promise<NodeData>;
-  updateNode: (node: Partial<NodeData>) => Promise<NodeData>;
+  removeNode: (node: NodeData) => Promise<void>;
+  updateNode: (updated: NodeData) => Promise<NodeData>;
   getAllNodes: () => Promise<void>;
   setActiveNode: (activeNode: NodeData | null) => void;
 };
@@ -59,10 +60,10 @@ export const useAtlasStore = create<AtlasState>()(
         };
         await api?.post('/api/v1/set-atlas', data);
       },
-      addNode: async (node: Partial<NodeData>) => {
+      addNode: async (active: Partial<NodeData>) => {
         const api = useApplicationStore.getState().backendAPI;
         const addedNodes = await api
-          ?.post('/api/v1/add-nodes', node)
+          ?.post('/api/v1/add-nodes', active)
           .then((data: { new: NodeData[] }) => {
             if (!data.new)
               throw new Error('backend did not respond with NodeData');
@@ -75,14 +76,34 @@ export const useAtlasStore = create<AtlasState>()(
             set({ nodes });
             return data.new;
           });
-        if (!addedNodes) throw new Error(`node: ${node} could not be added`);
+        if (!addedNodes) throw new Error(`node: ${active} could not be added`);
         return addedNodes[0]; // to-do: generalize to n nodes
       },
-      updateNode: async (node: Partial<NodeData>) => {
-        const current = get().activeNode?.filepath;
+      removeNode: async (active: NodeData) => {
         const api = useApplicationStore.getState().backendAPI;
-        const updatedNode = await api
-          ?.post('/api/v1/update-node', node)
+        let nodes = get().nodes;
+        if (!nodes)
+          throw new Error(
+            'tried to update nodes even though no nodes are loaded in',
+          );
+        nodes = nodes.filter((node) => node.filepath !== active.filepath);
+        await api
+          ?.delete(`/api/v1/nodes/${active.filepath}`)
+          .then((_response) => {
+            // to-do fix api typing
+            // if (!(response.status === 200))
+            //   throw new Error(
+            //     'during deletion the backend encountered a problem',
+            //   );
+          });
+        set({ nodes });
+      },
+      updateNode: async (updated: NodeData) => {
+        const current = get().activeNode;
+        if (!current) throw new Error('no active node found');
+        const api = useApplicationStore.getState().backendAPI;
+        const completed = await api
+          ?.post('/api/v1/update-node', { current, updated })
           .then((data: { new: NodeData }) => {
             let nodes = get().nodes;
             if (!nodes)
@@ -90,13 +111,14 @@ export const useAtlasStore = create<AtlasState>()(
                 'tried to update nodes even though no nodes are loaded in',
               );
             nodes = nodes.map((node) =>
-              node.filepath === current ? data.new : node,
+              node.filepath === current?.filepath ? data.new : node,
             );
             set({ nodes });
             return data.new;
           });
-        if (!updatedNode) throw new Error(`node: ${node} could not be updated`);
-        return updatedNode;
+        if (!completed)
+          throw new Error(`node: ${updated} could not be updated`);
+        return completed;
       },
       getAllNodes: async () => {
         const api = useApplicationStore.getState().backendAPI;

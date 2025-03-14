@@ -1,7 +1,7 @@
 import type { EditorThemeClasses } from 'lexical';
 
 const theme: EditorThemeClasses = {
-  root: 'twd h-full w-full p-4 rounded-md border border-neutral-700 focus:border-teal-500 focus:outline-none',
+  root: 'twd h-full w-full p-4 focus:outline-none',
   link: 'twd cursor-pointer text-blue-500 hover:text-blue-600 hover:underline',
   text: {
     bold: 'twd font-semibold',
@@ -30,7 +30,7 @@ const theme: EditorThemeClasses = {
     checklist: 'twd flex items-center gap-2',
   },
   quote:
-    'twd border-l-4 border-neutral-300 dark:border-neutral-700 pl-4 py-1 my-4 italic text-neutral-700 dark:text-neutral-300',
+    'twd border-l-4 border-neutral-300 dark:border-neutral-700 pl-4 py-1 my-4 focus:border-none italic text-neutral-700 dark:text-neutral-300',
   code: 'twd font-mono bg-neutral-100 dark:bg-neutral-800 rounded py-3 px-2 my-4 overflow-x-auto text-sm',
   codeHighlight: {
     atrule: 'twd text-blue-600 dark:text-blue-400',

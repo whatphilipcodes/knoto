@@ -1,7 +1,6 @@
 import { create } from 'zustand';
 import { BaseDirectory, sep } from '@tauri-apps/api/path';
 import { exists, mkdir } from '@tauri-apps/plugin-fs';
-import { emit } from '@tauri-apps/api/event';
 import { logger } from './middleware/logger';
 import { loadState } from './storeHelpers';
 import { withPersistentStorage } from './middleware/withPersistentStorage';
@@ -56,6 +55,7 @@ export const useAtlasStore = create<AtlasState>()(
           throw new Error('no atlasRootDir set in atlas store');
         const data: AtlasData = {
           root: atlas.atlasRootDir,
+          subdir_nodes: atlas.atlasSubdirNotes,
           id_database: atlas.atlasDatabaseName,
         };
         await api?.post('/api/v1/set-atlas', data);

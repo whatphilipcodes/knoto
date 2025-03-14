@@ -55,7 +55,11 @@ async def get_all_nodes():
 
 @app.post("/api/v1/set-atlas")
 async def set_atlas(atlas_data: AtlasData):
-    Store.set_atlas(atlas_data.root, atlas_data.id_database)
+    Store.set_atlas(
+        atlas_data.root,
+        atlas_data.subdir_nodes,
+        atlas_data.id_database,
+    )
     return {"message": f"new atlas root dir set: {Store.atlas_root}"}
 
 

@@ -10,6 +10,9 @@ class Model:
 
     def infer(self, node: NodeData) -> NodeData:
         print("inferring: ", node.filepath)
+        from store import Store
+
+        print(Store.atlas_subdir_nodes)
         node.pos.x = random.uniform(-1, 1)
         node.pos.y = random.uniform(-1, 1)
         return node

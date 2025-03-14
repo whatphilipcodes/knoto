@@ -1,5 +1,6 @@
 export interface AtlasData {
   root: string;
+  subdir_nodes: string;
   id_database: string;
 }
 

@@ -1,4 +1,11 @@
-import { type FC, useRef, useEffect, useMemo, useCallback } from 'react';
+import {
+  type FC,
+  useRef,
+  useState,
+  useEffect,
+  useMemo,
+  useCallback,
+} from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { CornerDownLeft } from 'lucide-react';
 import {
@@ -45,7 +52,6 @@ import { useAtlasStore } from '../../store/atlasStore';
 import { useRename } from '../../hooks/useRename';
 import { NodeData } from '../../utils/types';
 import theme from './theme';
-import { save } from '@tauri-apps/plugin-dialog';
 
 const onError = (error: Error) => {
   console.error(error);
@@ -71,6 +77,7 @@ const NoteEditor: FC<NoteEditorProps> = ({ baseDir = BaseDirectory.Home }) => {
   const atlas = useAtlasStore();
   const editor = useRef<LexicalEditor>(null!);
   const filenameCandidate = useRef<string>(null);
+  const [isNew, setIsNew] = useState<boolean>(false);
   const { renameFile } = useRename(baseDir);
 
   const initialConfig = {
@@ -119,7 +126,24 @@ const NoteEditor: FC<NoteEditorProps> = ({ baseDir = BaseDirectory.Home }) => {
   const newNote = useCallback(() => {
     atlas.setActiveNode(null);
     clearEditor();
+    setIsNew(true);
   }, [atlas]);
+
+  const confirm = useCallback(async () => {
+    if (!filenameCandidate.current) return;
+    setIsNew(false);
+    const prototype: NodeData = {
+      filepath: filenameCandidate.current,
+      pos: { x: 0, y: 0 },
+      cdt: new Date().toISOString(),
+      mdt: new Date().toISOString(),
+      col: randomColor(),
+    };
+    const newNode = await atlas.addNode(prototype);
+    saveContent();
+    atlas.setActiveNode(newNode);
+    document.dispatchEvent(new CustomEvent('atlas:blur-editor'));
+  }, []);
 
   const deleteActiveNode = useCallback(async () => {
     const active = atlas.activeNode;
@@ -128,20 +152,6 @@ const NoteEditor: FC<NoteEditorProps> = ({ baseDir = BaseDirectory.Home }) => {
     await remove(basePath + active.filepath);
     clearEditor();
   }, [atlas, basePath]);
-
-  const confirm = useCallback(async () => {
-    if (!filenameCandidate.current) return;
-    const prototype: NodeData = {
-      filepath: filenameCandidate.current,
-      pos: { x: 0, y: 0 },
-      cdt: new Date().toISOString(),
-      mdt: new Date().toISOString(),
-      col: '',
-    };
-    const newNode = await atlas.addNode(prototype);
-    saveContent();
-    atlas.setActiveNode(newNode);
-  }, []);
 
   const updateFilenameCandidate = useCallback((name: string) => {
     filenameCandidate.current = name;
@@ -189,8 +199,8 @@ const NoteEditor: FC<NoteEditorProps> = ({ baseDir = BaseDirectory.Home }) => {
         />
         <MarkdownShortcutPlugin transformers={TRANSFORMERS} />
         <OnChangePlugin onChange={saveContent} />
+        {isNew && <ConfirmAddition onConfirm={confirm} />}
         <AutoLinkPlugin matchers={MATCHERS} />
-        <ConfirmAddition onConfirm={confirm} />
         <HistoryPlugin />
         <GracefulBlur />
       </LexicalComposer>
@@ -219,3 +229,8 @@ const MATCHERS = [
     };
   },
 ];
+
+const randomColor = () => {
+  const colors = ['#8387f1', '#545ac1', '#2e3064'];
+  return colors[Math.floor(Math.random() * colors.length)];
+};

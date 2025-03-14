@@ -1,7 +1,7 @@
 from typing import ClassVar, Optional
 from utils import NodeData
-from db import AtlasDB
 from model import Model
+from db import AtlasDB
 import os
 
 
@@ -19,8 +19,9 @@ class Store:
         cls.model = Model()
 
     @classmethod
-    def set_atlas(cls, root: str, id_database: str) -> None:
+    def set_atlas(cls, root: str, subdir: str, id_database: str) -> None:
         cls.atlas_root = root
+        cls.atlas_subdir_nodes = subdir
         cls.db_path = os.path.join(root, id_database)
         if not cls.db:
             cls.db = AtlasDB(cls.db_path)

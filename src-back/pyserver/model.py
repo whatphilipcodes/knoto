@@ -10,6 +10,6 @@ class Model:
 
     def infer(self, node: NodeData) -> NodeData:
         print("inferring: ", node.filepath)
-        node.pos.x = random.random()
-        node.pos.y = random.random()
+        node.pos.x = random.uniform(-1, 1)
+        node.pos.y = random.uniform(-1, 1)
         return node

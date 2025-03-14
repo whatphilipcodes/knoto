@@ -55,8 +55,7 @@ const Menu: FC<MenuProps> = () => {
         )}
         <MenuStatus />
       </div>
-      {/* {current !== 'macos' && <MenuComponent />} */}
-      <MenuComponent />
+      {current !== 'macos' && <MenuComponent />}
     </div>
   );
 };

@@ -68,7 +68,7 @@ class TestDataDB:
 
         subtitle = random.choice(titles)
         content = [
-            f"### {filepath}",
+            f"### {os.path.splitext(filepath)[0]}",  # Exclude file extension
             "",
             f"# {subtitle}",
             random.choice(paragraphs),
@@ -89,8 +89,8 @@ class TestDataDB:
         """
         params = (
             filepath,
-            random.uniform(0, 1),
-            random.uniform(0, 1),
+            random.uniform(-1, 1),
+            random.uniform(-1, 1),
             now_str,
             now_str,
             random_color,

@@ -7,14 +7,12 @@ export function useNodeHover({
   data,
   nodeScale,
   atlasScale,
-  center,
   onNodeHover,
   debug = false,
 }: {
   data: NodeData[];
   nodeScale: number;
   atlasScale: number;
-  center: Vector2;
   onNodeHover?: (nodeId: string | number | null, index: number | null) => void;
   debug?: boolean;
 }) {
@@ -88,10 +86,10 @@ export function useNodeHover({
     const worldPos = new Vector3(mouseX, mouseY, 0);
     worldPos.unproject(camera);
 
-    // Convert to data space coordinates
+    // Convert to data space coordinates - now using absolute coordinates
     const dataPos = new Vector2(
-      worldPos.x / atlasScale + center.x,
-      worldPos.y / atlasScale + center.y,
+      worldPos.x / (atlasScale * 0.5),
+      worldPos.y / (atlasScale * 0.5),
     );
 
     if (debug && Math.random() < 0.01) {
@@ -175,11 +173,11 @@ export function useNodeHover({
       setHoverIndex(closestIdx);
 
       if (closestIdx !== null) {
-        // Store the position of the hovered node for the highlight
+        // Store the position of the hovered node for the highlight using absolute coordinates
         const nodePos = data[closestIdx].pos;
         const worldPos = new Vector3(
-          (nodePos.x - center.x) * atlasScale,
-          (nodePos.y - center.y) * atlasScale,
+          nodePos.x * atlasScale * 0.5,
+          nodePos.y * atlasScale * 0.5,
           0,
         );
         setHoverPosition(worldPos);

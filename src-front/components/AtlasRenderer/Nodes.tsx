@@ -15,41 +15,29 @@ interface NodesProps {
 
 const Nodes: FC<NodesProps> = ({
   data = [],
-  nodeScale = 0.1,
+  nodeScale = 1,
   atlasScale = 1000,
   onNodeHover,
   debug = false,
-  hoverColor = new Color(0xf6c99f), // Default hover color (magenta)
+  hoverColor = new Color(0xf6c99f),
 }) => {
   const ref = useRef<InstancedMesh>(null!);
   const origin = useMemo(() => new Object3D(), []);
-
-  // Calculate center once
-  const center = useMemo(() => {
-    if (data.length === 0) return new Vector2(0, 0);
-    const sum = data.reduce(
-      (acc, entry) => acc.add(entry.pos),
-      new Vector2(0, 0),
-    );
-    return sum.divideScalar(data.length);
-  }, [data, data.length]);
+  const center = useMemo(() => new Vector2(0, 0), []);
 
   if (debug) {
     useEffect(() => {
-      console.log('Center calculated:', center.toArray());
       console.log('Atlas scale:', atlasScale);
       console.log('Node scale:', nodeScale);
-    }, [center, atlasScale, nodeScale]);
+    }, [atlasScale, nodeScale]);
   }
 
-  // Process colors
   const colors = useMemo(() => {
     return new Float32Array(
       data.map(({ col }) => new Color(col).toArray()).flat(),
     );
   }, [data, data.length]);
 
-  // Set up instance matrices efficiently
   useLayoutEffect(() => {
     if (!ref.current || data.length === 0) return;
 
@@ -57,7 +45,6 @@ const Nodes: FC<NodesProps> = ({
       console.log('Setting up instance matrices for', data.length, 'instances');
     }
 
-    // Process in batches for large datasets
     const batchSize = 10000;
     for (let i = 0; i < data.length; i += batchSize) {
       const end = Math.min(i + batchSize, data.length);
@@ -65,11 +52,11 @@ const Nodes: FC<NodesProps> = ({
       for (let j = i; j < end; j++) {
         const entry = data[j];
         origin.position.set(
-          (entry.pos.x - center.x) * atlasScale,
-          (entry.pos.y - center.y) * atlasScale,
+          entry.pos.x * atlasScale * 0.5,
+          entry.pos.y * atlasScale * 0.5,
           0,
         );
-        origin.scale.set(1, 1, 1); // Ensure scale is reset
+        origin.scale.set(1, 1, 1);
         origin.updateMatrix();
         ref.current.setMatrixAt(j, origin.matrix);
       }
@@ -80,7 +67,7 @@ const Nodes: FC<NodesProps> = ({
     if (debug) {
       console.log('Instance matrices updated');
     }
-  }, [data, data.length, atlasScale, center, origin, debug]);
+  }, [data, data.length, atlasScale, origin, debug]);
 
   return (
     <>

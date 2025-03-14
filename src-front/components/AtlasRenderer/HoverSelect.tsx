@@ -22,7 +22,6 @@ const HoverSelect = memo(
     data,
     nodeScale,
     atlasScale,
-    center,
     hoverColor,
     onNodeHover,
   }: HoverSelectProps) => {
@@ -33,7 +32,6 @@ const HoverSelect = memo(
       data,
       nodeScale,
       atlasScale,
-      center,
       onNodeHover,
     });
 

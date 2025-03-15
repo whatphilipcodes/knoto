@@ -19,3 +19,8 @@ export interface NodeData {
   mdt: string;
   col: string;
 }
+
+export interface NewNodeData {
+  node: Partial<NodeData>;
+  content: string;
+}

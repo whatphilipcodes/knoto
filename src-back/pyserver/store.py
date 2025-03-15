@@ -1,5 +1,5 @@
 from typing import ClassVar, Optional
-from utils import NodeData, AppData, AtlasData
+from utils import NodeData, AppData, AtlasData, NewNodeData
 from model import Model
 from db import AtlasDB
 import os
@@ -33,7 +33,7 @@ class Store:
             cls.db.change_db(cls.db_path)
 
     @classmethod
-    def insert_nodes(cls, nodes: NodeData | list[NodeData]) -> list[NodeData]:
+    def insert_nodes(cls, nodes: NewNodeData | list[NewNodeData]) -> list[NodeData]:
         if not isinstance(nodes, list):
             nodes = [nodes]
         results = list(map(cls.model.infer, nodes))

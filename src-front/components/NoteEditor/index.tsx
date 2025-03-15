@@ -132,6 +132,7 @@ const NoteEditor: FC<NoteEditorProps> = ({ baseDir = BaseDirectory.Home }) => {
   const confirm = useCallback(async () => {
     if (!filenameCandidate.current) return;
     setIsNew(false);
+    await saveContent(); // not quick enough, we need to send the content alongside the request
     const prototype: NodeData = {
       filepath: filenameCandidate.current,
       pos: { x: 0, y: 0 },
@@ -139,8 +140,11 @@ const NoteEditor: FC<NoteEditorProps> = ({ baseDir = BaseDirectory.Home }) => {
       mdt: new Date().toISOString(),
       col: randomColor(),
     };
-    const newNode = await atlas.addNode(prototype);
-    saveContent();
+    let content = '';
+    editor.current.update(() => {
+      content = $convertToMarkdownString(TRANSFORMERS);
+    });
+    const newNode = await atlas.addNode(prototype, content);
     atlas.setActiveNode(newNode);
     document.dispatchEvent(new CustomEvent('atlas:blur-editor'));
   }, []);

@@ -26,6 +26,11 @@ class NodeData(BaseModel):
     col: str
 
 
+class NewNodeData(BaseModel):
+    node: NodeData
+    content: str
+
+
 class UpdateNodeRequest(BaseModel):
     current: NodeData
     updated: NodeData

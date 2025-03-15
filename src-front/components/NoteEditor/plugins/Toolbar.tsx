@@ -7,7 +7,7 @@ import {
   Redo,
   Bold,
   Italic,
-  Underline,
+  // Underline,
   Strikethrough,
   Trash2,
 } from 'lucide-react';
@@ -37,7 +37,7 @@ const Toolbar: FC<ToolbarProps> = ({ onDelete }) => {
   const [canRedo, setCanRedo] = useState(false);
   const [isBold, setIsBold] = useState(false);
   const [isItalic, setIsItalic] = useState(false);
-  const [isUnderline, setIsUnderline] = useState(false);
+  // const [isUnderline, setIsUnderline] = useState(false);
   const [isStrikethrough, setIsStrikethrough] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
@@ -47,7 +47,7 @@ const Toolbar: FC<ToolbarProps> = ({ onDelete }) => {
       // Update text format
       setIsBold(selection.hasFormat('bold'));
       setIsItalic(selection.hasFormat('italic'));
-      setIsUnderline(selection.hasFormat('underline'));
+      // setIsUnderline(selection.hasFormat('underline'));
       setIsStrikethrough(selection.hasFormat('strikethrough'));
     }
   }, []);

@@ -14,7 +14,7 @@ const App = () => {
 
   useLayoutEffect(() => {
     const asyncSetup = async () => {
-      await application.initAppConfigDir();
+      await application.initAppDirs();
       await application.initBackendAPI();
       const asyncCleanup: (() => void)[] = [];
       asyncCleanup.push(

@@ -4,7 +4,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
 from store import Store
-from utils import AtlasData, NodeData, UpdateNodeRequest
+from utils import AppData, AtlasData, NodeData, UpdateNodeRequest
 from cli import parse_arguments
 
 
@@ -53,14 +53,17 @@ async def get_all_nodes():
     return {"nodes": nodes}
 
 
+@app.post("/api/v1/set-app")
+async def set_app(data: AppData):
+    Store.set_app(data)
+    print("backend initialized")
+    print("data dir: ", Store.app.app_dir_data)
+
+
 @app.post("/api/v1/set-atlas")
-async def set_atlas(atlas_data: AtlasData):
-    Store.set_atlas(
-        atlas_data.root,
-        atlas_data.subdir_nodes,
-        atlas_data.id_database,
-    )
-    return {"message": f"new atlas root dir set: {Store.atlas_root}"}
+async def set_atlas(data: AtlasData):
+    Store.set_atlas(data)
+    return {"message": f"new atlas root dir set: {Store.atlas.root}"}
 
 
 @app.post("/api/v1/add-nodes")

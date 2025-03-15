@@ -2,6 +2,11 @@ from pydantic import BaseModel
 from typing import Optional
 
 
+class AppData(BaseModel):
+    app_dir_config: str
+    app_dir_data: str
+
+
 class AtlasData(BaseModel):
     root: str
     subdir_nodes: str

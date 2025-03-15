@@ -137,7 +137,8 @@ const Toolbar: FC<ToolbarProps> = ({ onDelete }) => {
           >
             <Italic size={16} />
           </Button>
-          <Button
+          {/* underline is not supported by default markdown */}
+          {/* <Button
             onClick={() => {
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline');
             }}
@@ -148,7 +149,7 @@ const Toolbar: FC<ToolbarProps> = ({ onDelete }) => {
             aria-label='Format Underline'
           >
             <Underline size={16} />
-          </Button>
+          </Button> */}
           <Button
             onClick={() => {
               editor.dispatchCommand(FORMAT_TEXT_COMMAND, 'strikethrough');

@@ -1,4 +1,4 @@
-<h1><img src="./public/knoto.svg" alt="logo" width="80" align="center"/>&nbsp;&nbsp;&nbsp;knoto</h1>
+<h1><img src="./public/favicon.svg" alt="logo" width="80" align="center"/>&nbsp;&nbsp;&nbsp;knoto</h1>
 
 <a href="https://knoto.whatphilipdoes.com"><img alt="Website" src="https://img.shields.io/website?url=https%3A%2F%2Fknoto.whatphilipdoes.com%2F&label=docs&up_message=online&down_message=offline"></a>
 
@@ -108,5 +108,6 @@ To generate an actual usable debug build in that location, run the `debug-build`
 
 ### known issues
 
+- [ ] macOS currently not possible because torch is no longer available for intel based systems
 - [ ] selecting multiple notes after each other before the editor completes a renaming op crashes the atlas
 - [ ] r3f canvas won't dynamically size down when the window size is changed

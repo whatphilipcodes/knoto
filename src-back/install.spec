@@ -29,9 +29,9 @@ except Exception as e:
 output_name = f"{app_name}-{target_triple}"
 
 ### collect python
-datas = []
+datas = [("models", "models")]
 binaries = []
-hiddenimports = []
+hiddenimports = ['umap']
 
 block_cipher = None
 

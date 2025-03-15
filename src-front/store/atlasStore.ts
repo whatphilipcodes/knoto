@@ -5,8 +5,7 @@ import { logger } from './middleware/logger';
 import { loadState } from './storeHelpers';
 import { withPersistentStorage } from './middleware/withPersistentStorage';
 import { useApplicationStore } from './applicationStore';
-import { AtlasData } from '../utils/types';
-import { NodeData } from '../utils/types';
+import { AtlasData, NodeData, NewNodeData } from '../utils/types';
 
 const defaultAtlasState = {
   atlasRootDir: null as string | null,
@@ -20,7 +19,7 @@ const defaultAtlasState = {
 export type AtlasState = typeof defaultAtlasState & {
   setFullState: (newState: AtlasState) => void;
   updateBackend: () => Promise<void>;
-  addNode: (node: Partial<NodeData>) => Promise<NodeData>;
+  addNode: (node: Partial<NodeData>, content: string) => Promise<NodeData>;
   removeNode: (node: NodeData) => Promise<void>;
   updateNode: (updated: NodeData) => Promise<NodeData>;
   getAllNodes: () => Promise<void>;
@@ -60,10 +59,14 @@ export const useAtlasStore = create<AtlasState>()(
         };
         await api?.post('/api/v1/set-atlas', data);
       },
-      addNode: async (active: Partial<NodeData>) => {
+      addNode: async (active, content) => {
         const api = useApplicationStore.getState().backendAPI;
+        const newNode: NewNodeData = {
+          node: active,
+          content: content,
+        };
         const addedNodes = await api
-          ?.post('/api/v1/add-nodes', active)
+          ?.post('/api/v1/add-nodes', newNode)
           .then((data: { new: NodeData[] }) => {
             if (!data.new)
               throw new Error('backend did not respond with NodeData');

@@ -4,6 +4,11 @@ export interface AtlasData {
   id_database: string;
 }
 
+export interface AppData {
+  app_dir_config: string;
+  app_dir_data: string;
+}
+
 export interface NodeData {
   filepath: string;
   pos: {
@@ -13,4 +18,9 @@ export interface NodeData {
   cdt: string;
   mdt: string;
   col: string;
+}
+
+export interface NewNodeData {
+  node: Partial<NodeData>;
+  content: string;
 }

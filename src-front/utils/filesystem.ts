@@ -1,5 +1,5 @@
 import { exists, mkdir } from '@tauri-apps/plugin-fs';
-import { appConfigDir } from '@tauri-apps/api/path';
+import { appConfigDir, appDataDir } from '@tauri-apps/api/path';
 import { open } from '@tauri-apps/plugin-dialog';
 
 export const openDir = async () => {
@@ -15,16 +15,25 @@ export const openDir = async () => {
   }
 };
 
-export const getAppConfigDir = async () => {
+export const getAppDirs = async () => {
+  let config: string;
+  let data: string;
   try {
-    const dir = await appConfigDir();
-    if (await exists(dir)) {
-      return dir;
-    } else {
-      await mkdir(dir);
-      return dir;
+    const tmpConfig = await appConfigDir();
+    if (!(await exists(tmpConfig))) {
+      await mkdir(tmpConfig);
     }
+    config = tmpConfig;
+
+    const tmpData = await appDataDir();
+    if (!(await exists(tmpData))) {
+      await mkdir(tmpData);
+    }
+    data = tmpData;
+
+    return [config, data];
   } catch (error) {
-    console.error('An error occurred in ensureAppConfig:', error);
+    console.error('An error occurred in getAppDirs:', error);
+    return [null, null];
   }
 };

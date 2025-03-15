@@ -2,6 +2,11 @@ from pydantic import BaseModel
 from typing import Optional
 
 
+class AppData(BaseModel):
+    app_dir_config: str
+    app_dir_data: str
+
+
 class AtlasData(BaseModel):
     root: str
     subdir_nodes: str
@@ -19,6 +24,11 @@ class NodeData(BaseModel):
     cdt: str
     mdt: str
     col: str
+
+
+class NewNodeData(BaseModel):
+    node: NodeData
+    content: str
 
 
 class UpdateNodeRequest(BaseModel):

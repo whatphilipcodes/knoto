@@ -1,12 +1,13 @@
 from typing import ClassVar, Optional
-from utils import NodeData
+from utils import NodeData, AppData, AtlasData, NewNodeData
 from model import Model
 from db import AtlasDB
 import os
 
 
 class Store:
-    atlas_root: ClassVar[Optional[str]] = None
+    app: AppData
+    atlas: AtlasData
     db_path: ClassVar[Optional[str]] = None
     model: ClassVar[Optional[Model]] = None
     db: ClassVar[Optional[AtlasDB]] = None
@@ -19,17 +20,20 @@ class Store:
         cls.model = Model()
 
     @classmethod
-    def set_atlas(cls, root: str, subdir: str, id_database: str) -> None:
-        cls.atlas_root = root
-        cls.atlas_subdir_nodes = subdir
-        cls.db_path = os.path.join(root, id_database)
+    def set_app(cls, data: AppData) -> None:
+        cls.app = data
+
+    @classmethod
+    def set_atlas(cls, data: AtlasData) -> None:
+        cls.atlas = data
+        cls.db_path = os.path.join(cls.atlas.root, cls.atlas.id_database)
         if not cls.db:
             cls.db = AtlasDB(cls.db_path)
         else:
             cls.db.change_db(cls.db_path)
 
     @classmethod
-    def insert_nodes(cls, nodes: NodeData | list[NodeData]) -> list[NodeData]:
+    def insert_nodes(cls, nodes: NewNodeData | list[NewNodeData]) -> list[NodeData]:
         if not isinstance(nodes, list):
             nodes = [nodes]
         results = list(map(cls.model.infer, nodes))

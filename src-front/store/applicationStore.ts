@@ -4,10 +4,12 @@ import { invoke } from '@tauri-apps/api/core';
 import { emit } from '@tauri-apps/api/event';
 import { withPersistentStorage } from './middleware/withPersistentStorage';
 import { logger } from './middleware/logger';
-import { openDir, getAppConfigDir } from '../utils/filesystem';
+import { openDir, getAppDirs } from '../utils/filesystem';
 import { ApiClient } from '../utils/api';
+import { AppData } from '../utils/types';
 
 const defaultApplicationState = {
+  appDataDir: null as string | null,
   backendAPI: null as ApiClient | null,
   backendPort: null as number | null,
   appConfigDir: null as string | null,
@@ -15,7 +17,7 @@ const defaultApplicationState = {
 };
 
 type ApplicationState = typeof defaultApplicationState & {
-  initAppConfigDir: () => Promise<void>;
+  initAppDirs: () => Promise<void>;
   initBackendAPI: () => Promise<void>;
   openAtlasDir: () => Promise<void>;
 };
@@ -29,10 +31,10 @@ export const useApplicationStore = create<ApplicationState>()(
         ['activeAtlasDir'],
       )((set, get) => ({
         ...defaultApplicationState,
-        initAppConfigDir: async () => {
-          if (get().appConfigDir) return;
-          const appConfigDir = await getAppConfigDir();
-          set({ appConfigDir });
+        initAppDirs: async () => {
+          if (get().appConfigDir && get().appDataDir) return;
+          const [appConfigDir, appDataDir] = await getAppDirs();
+          set({ appConfigDir, appDataDir });
         },
         initBackendAPI: async () => {
           const backendPort = await invoke<number>('get_port');
@@ -42,6 +44,17 @@ export const useApplicationStore = create<ApplicationState>()(
               backendPort,
               backendAPI: api,
             });
+            const dir_config = get().appConfigDir;
+            const dir_data = get().appDataDir;
+            if (!dir_config || !dir_data)
+              throw new Error(
+                'backend initialization failed, config or data dir are not set',
+              );
+            const data: AppData = {
+              app_dir_config: dir_config,
+              app_dir_data: dir_data,
+            };
+            await api.post('/api/v1/set-app', data);
           } else {
             throw new Error('Could not connect to backendAPI');
           }

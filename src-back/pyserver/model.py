@@ -4,7 +4,7 @@ import pickle
 from sentence_transformers import SentenceTransformer
 from utils import NodeData, NewNodeData, Coordinates
 
-COORDINATE_GEN = "umap_10k.pkl"
+COORDINATE_GEN = "umap.pkl"
 SBERT = "sbert"
 
 
@@ -16,7 +16,6 @@ def get_model_dir() -> str:
 
 
 class Model:
-
     def __init__(self):
         self.model_dir = get_model_dir()
         self.umap_dir = os.path.join(self.model_dir, COORDINATE_GEN)
@@ -35,7 +34,6 @@ class Model:
         print("models initialized")
 
     def infer(self, node: NewNodeData) -> NodeData:
-
         embedding = self.sbert.encode(node.content)
         coordinates = self.reducer.transform(embedding.reshape(1, -1))
         scaled = self.scaler.transform(coordinates)
